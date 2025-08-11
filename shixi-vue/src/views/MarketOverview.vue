@@ -1,14 +1,16 @@
 <script setup>
 import { onMounted, onBeforeUnmount, ref } from 'vue'
+import { predict } from '@/services/api'
 
 const chartContainerRef = ref(null)
 let chartInstance = null
 
-const initChart = () => {
+const initChart = async () => {
   if (!chartContainerRef.value) return
   const echarts = window.echarts
   if (!echarts) return
   chartInstance = echarts.init(chartContainerRef.value)
+  const seriesData = await loadSeries()
   chartInstance.setOption({
     backgroundColor: 'transparent',
     tooltip: { trigger: 'axis' },
@@ -34,19 +36,24 @@ const initChart = () => {
         showSymbol: false,
         lineStyle: { width: 2, color: '#6666FF' },
         areaStyle: { color: 'rgba(102,102,255,0.12)' },
-        data: generateSeries()
+        data: seriesData
       }
     ]
   })
 }
 
-function generateSeries() {
-  // simple synthetic series
-  let value = 100
-  return Array.from({ length: 50 }, () => {
-    value += (Math.random() - 0.45) * 2.5
-    return Number(value.toFixed(2))
-  })
+async function loadSeries() {
+  try {
+    const { points } = await predict({ symbol: 'AAPL', horizon: '30d', model: 'LSTM' })
+    return points.map(p => p.v)
+  } catch {
+    // fallback synthetic data
+    let value = 100
+    return Array.from({ length: 50 }, () => {
+      value += (Math.random() - 0.45) * 2.5
+      return Number(value.toFixed(2))
+    })
+  }
 }
 
 const handleResize = () => {

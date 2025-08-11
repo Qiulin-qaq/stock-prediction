@@ -1,5 +1,6 @@
 <script setup>
 import { ref, reactive, computed, onMounted } from 'vue'
+import { saveAlertRules } from '@/services/api'
 
 // Channels
 const channelEmail = ref(true)
@@ -119,6 +120,15 @@ function restore() {
 onMounted(restore)
 
 const rulesCount = computed(() => rules.value.length)
+
+async function syncToServer() {
+  try {
+    const { saved } = await saveAlertRules(rules.value)
+    showToast(`已同步 ${saved} 条规则`, 'success')
+  } catch (e) {
+    showToast('同步失败：' + e.message, 'error')
+  }
+}
 </script>
 
 <template>
@@ -240,6 +250,7 @@ const rulesCount = computed(() => rules.value.length)
             <div class="mt-2 text-xs text-base-content/60">渠道偏好会保存在本地浏览器。</div>
             <div class="mt-3">
               <button class="btn btn-sm" @click="persist">保存渠道偏好</button>
+              <button class="btn btn-primary btn-sm ml-2" @click="syncToServer">同步规则到后端</button>
             </div>
           </div>
         </div>

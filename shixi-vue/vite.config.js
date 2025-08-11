@@ -29,6 +29,13 @@ export default defineConfig({
   },
   server: {
     port: 8080,
-    open: true
+    open: true,
+    proxy: {
+      '/api': {
+        target: 'http://127.0.0.1:4523/m1/6929078-6645229-default', // 你的 Python 后端
+        changeOrigin: true
+      }
+    }
   }
+
 })

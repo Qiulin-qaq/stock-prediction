@@ -35,11 +35,7 @@ const routes = [
     name: 'agentComparison',
     component: () => import('../views/AgentComparison.vue')
   },
-  {
-    path: '/login',
-    name: 'login',
-    component: () => import('../components/LoginPage.vue')
-  },
+  
 ]
 
 const router = createRouter({
