@@ -1,0 +1,1487 @@
+
+                <!DOCTYPE html>
+                <html lang="zh">
+                <head>
+                  <meta charset="UTF-8">
+                  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                  <title>智能体表现评估</title>
+                  <style>
+                    *,
+                    *::before,
+                    *::after {
+                      box-sizing: border-box;
+                      margin: 0;
+                    }
+                    .iframe-outer {
+                      position: fixed;
+                      top: 0;
+                      left: 0;
+                      bottom: 0;
+                      right: 0;
+                      display: flex;
+                      justify-content: center;
+                      background-color: #E0E0E0;
+                    }
+                    .iframe-wrapper {
+                      width: 100%;
+                      height: 100%;
+                      margin: 0 auto;
+                      transform-origin: center top;
+                      flex-shrink: 0;
+                    }
+                    #dynamicIframe {
+                      border: none;
+                      width: 100%;
+                      height: 100%;
+                    }
+                  </style>
+                  <script>
+                const width = 1920
+                const height = 1080
+                const resolutionRatio = width && height ? width / height : 1
+                const pageNameMap = {
+                  'login_page': '登录页',
+    'registration_page': '注册页',
+    'forgot_password_page': '忘记密码',
+    'market_overview_dashboard': '市场概览仪表盘',
+    'prediction_analysis_center': '预测结果分析中心',
+    'agent_comparison_module': '智能体模型对比',
+    'agent_evaluation_page': '智能体表现评估',
+    'personalization_settings_center': '个性化设置中心',
+    'watchlist_management': '自选股管理',
+    'prediction_preference_settings': '预测偏好设置',
+    'alert_settings_page': '时序预警设置',
+    'user_profile_management': '用户资料管理',
+    'help_support_page': '帮助与支持'
+                }
+                function setIframeSize(w, h) {
+                  const currentContainerRadio = w / h
+                  let widthValue = w
+                  let heightValue = h
+                  let zoom = 1
+                  if (currentContainerRadio > resolutionRatio) {
+                    widthValue = h * resolutionRatio
+                    heightValue = h
+                  } else {
+                    widthValue = w
+                    heightValue = w / resolutionRatio
+                  }
+                  zoom = width ? widthValue / width : 1
+                  return {
+                    width: widthValue / zoom + 'px',
+                    height: heightValue / zoom + 'px',
+                    zoom,
+                  }
+                }
+                function adjustIframeSize() {
+                  const iframeWrapper = document.querySelector(".iframe-wrapper")
+                  const { width, height, zoom } = setIframeSize(window.innerWidth, window.innerHeight)
+                  iframeWrapper.style.height = height
+                  iframeWrapper.style.width = width
+                  iframeWrapper.style.transform = 'scale(' + zoom + ')'
+                }
+                function sanitizeFilename(name) {
+                  return name.replace(/[\/:*?"<>|]/g, '_')
+                }
+                function handlePostMessage(event) {
+                  if (!event.data) {
+                    return
+                  }
+                  const { type, targetPageId } = event.data
+                  const targetPageName = pageNameMap[targetPageId]
+                  if (type === "iframeNavigation" && targetPageId && targetPageName) {
+                    window.location.href = targetPageName + '.html'
+                  }
+                }
+                window.addEventListener('message', handlePostMessage)
+                window.onload = adjustIframeSize
+                window.onresize = adjustIframeSize
+                window.onunload = () => {
+                  window.removeEventListener('message', handlePostMessage)
+                }
+              </script>
+                </head>
+                <body>
+                  <div class="iframe-outer">
+                    <div class="iframe-wrapper">
+                      <iframe id="dynamicIframe" srcdoc='<html lang="zh-CN" data-theme="black"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智能体表现评估 - 股票预测系统</title>
+    <link href="./assets/static/uxbot/daisyui@5.css" rel="stylesheet" type="text/css">
+    <script src="./assets/static/uxbot/tailwind-browser@4.js"></script>
+    <link href="./assets/static/uxbot/daisyui-themes.css" rel="stylesheet" type="text/css">
+    <script src="./assets/3/3.1.1/iconify.min.js"></script>
+    <style>
+/* Import Google Fonts */
+@import url(&apos;https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap&apos;);
+
+/* DaisyUI Theme Variables Customization - Tech Cold Beauty Theme */
+:root {
+    /* Base Colors - Deep Dark Theme */
+    --color-base-100: rgba(0, 0, 0, 1);           /* Pure Black - main backgrounds */
+    --color-base-200: rgba(13, 13, 13, 1);       /* Dark Grey - secondary backgrounds, cards */
+    --color-base-300: rgba(26, 26, 26, 1);       /* Slightly Lighter Dark Grey - borders, separators */
+    --color-base-content: rgba(240, 240, 240, 1); /* Off-white/Light Grey - primary text */
+    
+    /* Fluorescent Accent Colors */
+    --color-primary: rgba(102, 102, 255, 1);      /* Fluorescent Blue-Purple */
+    --color-primary-content: rgba(0, 0, 0, 1);
+    --color-secondary: rgba(51, 255, 204, 1);     /* Fluorescent Cyan-Green */
+    --color-secondary-content: rgba(0, 0, 0, 1);
+    --color-accent: rgba(255, 136, 51, 1);        /* Fluorescent Red-Orange */
+    --color-accent-content: rgba(0, 0, 0, 1);
+    
+    /* Neutral Colors */
+    --color-neutral: rgba(42, 46, 55, 1);
+    --color-neutral-content: rgba(240, 240, 240, 1);
+    
+    /* Semantic Colors - Vibrant for Tech Aesthetic */
+    --color-success: rgba(0, 255, 127, 1);        /* Vibrant neon green */
+    --color-success-content: rgba(0, 0, 0, 1);
+    --color-warning: rgba(255, 191, 0, 1);        /* Bright orange/yellow */
+    --color-warning-content: rgba(0, 0, 0, 1);
+    --color-error: rgba(255, 51, 102, 1);         /* Bold neon red */
+    --color-error-content: rgba(0, 0, 0, 1);
+    --color-info: rgba(0, 191, 255, 1);           /* Clean bright blue */
+    --color-info-content: rgba(0, 0, 0, 1);
+    
+    /* Border radius and effects - Minimal tech aesthetic */
+    --radius-box: 0.25rem;    /* 4px for crisp, tech feel */
+    --radius-field: 0.25rem;
+    --radius-selector: 0.25rem;
+    --border: 1px;
+}
+
+/* Typography */
+.font-heading {
+    font-family: &apos;Inter&apos;, sans-serif;
+    font-weight: 600;
+}
+
+.font-body {
+    font-family: &apos;Inter&apos;, sans-serif;
+}
+
+.font-mono {
+    font-family: &apos;JetBrains Mono&apos;, monospace;
+}
+
+/* Apply fonts globally */
+h1, h2, h3, h4, h5, h6 {
+    font-family: &apos;Inter&apos;, sans-serif;
+    font-weight: 600;
+}
+
+body, p, span, div, button, input, textarea, select {
+    font-family: &apos;Inter&apos;, sans-serif;
+}
+
+/* Tech-cold beauty effects */
+.glow-primary {
+    box-shadow: 0 0 20px rgba(102, 102, 255, 0.3);
+}
+
+.glow-secondary {
+    box-shadow: 0 0 20px rgba(51, 255, 204, 0.3);
+}
+
+.glow-accent {
+    box-shadow: 0 0 20px rgba(255, 136, 51, 0.3);
+}
+
+/* Smooth transitions for interactive elements */
+.nav-item {
+    transition: all 0.15s ease-in-out;
+}
+
+.nav-item:hover {
+    color: var(--color-secondary);
+    text-shadow: 0 0 8px var(--color-secondary);
+}
+
+/* Custom shadows for tech aesthetic - hard edges */
+.shadow-tech {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(102, 102, 255, 0.1);
+}
+
+.shadow-tech-lg {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(102, 102, 255, 0.2);
+}
+
+/* Frosted glass effect for panels */
+.glass-panel {
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(102, 102, 255, 0.1);
+}
+
+/* Button hover effects with fluorescent glow */
+.btn:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(var(--color-primary), 0.4);
+}
+
+/* Input focus effects */
+.input:focus, .select:focus, .textarea:focus {
+    box-shadow: 0 0 0 2px var(--color-primary), 0 0 12px rgba(var(--color-primary), 0.3);
+}
+</style>
+    <style>
+/* Circuit board pattern background */
+.bg-circuit-pattern {
+    background-image: 
+        linear-gradient(90deg, rgba(102, 102, 255, 0.1) 1px, transparent 1px),
+        linear-gradient(rgba(102, 102, 255, 0.1) 1px, transparent 1px);
+    background-size: 20px 20px;
+}
+
+/* Geometric pattern background */
+.bg-geometric-pattern {
+    background-image: 
+        radial-gradient(circle at 25% 25%, rgba(51, 255, 204, 0.1) 2px, transparent 2px),
+        radial-gradient(circle at 75% 75%, rgba(255, 136, 51, 0.1) 2px, transparent 2px);
+    background-size: 40px 40px;
+}
+
+/* Enhanced glow effects for interactive elements */
+.btn:hover:not(:disabled) {
+    transform: translateY(-1px);
+    transition: all 0.15s ease-in-out;
+}
+
+.btn-primary:hover:not(:disabled) {
+    box-shadow: 0 0 20px rgba(102, 102, 255, 0.4);
+}
+
+.btn-secondary:hover:not(:disabled) {
+    box-shadow: 0 0 20px rgba(51, 255, 204, 0.4);
+}
+
+.btn-accent:hover:not(:disabled) {
+    box-shadow: 0 0 20px rgba(255, 136, 51, 0.4);
+}
+
+/* Input focus glow effects */
+.input:focus, .select:focus, .textarea:focus {
+    box-shadow: 0 0 0 2px var(--color-primary), 0 0 16px rgba(102, 102, 255, 0.3) !important;
+    border-color: var(--color-primary) !important;
+}
+
+/* Range slider enhancements */
+.range:focus {
+    box-shadow: 0 0 12px rgba(102, 102, 255, 0.3);
+}
+
+.range-primary::-webkit-slider-thumb {
+    box-shadow: 0 0 8px rgba(102, 102, 255, 0.5);
+}
+
+.range-secondary::-webkit-slider-thumb {
+    box-shadow: 0 0 8px rgba(51, 255, 204, 0.5);
+}
+
+/* Table row hover effects */
+.table tbody tr:hover {
+    background-color: rgba(102, 102, 255, 0.05) !important;
+    transition: background-color 0.15s ease-in-out;
+}
+
+/* Chart container styling */
+#errorTrendChart, #sensitivityChart {
+    background: transparent;
+}
+
+/* Log container scrollbar styling */
+#logContainer::-webkit-scrollbar {
+    width: 8px;
+}
+
+#logContainer::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+}
+
+#logContainer::-webkit-scrollbar-thumb {
+    background: rgba(102, 102, 255, 0.5);
+    border-radius: 4px;
+}
+
+#logContainer::-webkit-scrollbar-thumb:hover {
+    background: rgba(102, 102, 255, 0.7);
+}
+
+/* Loading state for buttons */
+.btn.loading {
+    position: relative;
+}
+
+.btn.loading::after {
+    content: &apos;&apos;;
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    border: 2px solid transparent;
+    border-top: 2px solid currentColor;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Data flow animation for backgrounds */
+@keyframes dataFlow {
+    0% { transform: translateX(-100%); opacity: 0; }
+    50% { opacity: 1; }
+    100% { transform: translateX(100%); opacity: 0; }
+}
+
+.glass-panel::before {
+    content: &apos;&apos;;
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(102, 102, 255, 0.6), transparent);
+    animation: dataFlow 3s infinite;
+    z-index: 1;
+}
+
+/* Particle effect for iteration history section */
+@keyframes particleFloat {
+    0%, 100% { transform: translateY(0px) translateX(0px); opacity: 0.3; }
+    33% { transform: translateY(-10px) translateX(5px); opacity: 0.7; }
+    66% { transform: translateY(5px) translateX(-3px); opacity: 0.5; }
+}
+
+.glass-panel:nth-child(3)::after {
+    content: &apos;&apos;;
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: rgba(51, 255, 204, 0.6);
+    border-radius: 50%;
+    top: 20%;
+    right: 10%;
+    animation: particleFloat 4s infinite;
+}
+
+/* Enhanced card hover effects */
+.card:hover {
+    transform: translateY(-2px);
+    transition: transform 0.15s ease-in-out;
+}
+
+/* Badge glow effects */
+.badge-success {
+    box-shadow: 0 0 8px rgba(0, 255, 127, 0.3);
+}
+
+.badge-warning {
+    box-shadow: 0 0 8px rgba(255, 191, 0, 0.3);
+}
+
+.badge-error {
+    box-shadow: 0 0 8px rgba(255, 51, 102, 0.3);
+}
+
+.badge-info {
+    box-shadow: 0 0 8px rgba(0, 191, 255, 0.3);
+}
+
+/* Collapse arrow animation */
+.collapse-arrow .collapse-title:after {
+    transition: transform 0.2s ease-in-out;
+}
+
+/* Table sort indicator enhancement */
+.table th:hover .iconify {
+    color: var(--color-primary);
+    transition: color 0.15s ease-in-out;
+}
+
+/* Log level badge styling */
+.badge-xs {
+    font-size: 0.6rem;
+    min-width: 3rem;
+    text-align: center;
+}
+</style>
+<script src="./assets/static/uxbot/25_6/holder.js"></script></head>
+<body class="bg-base-100 min-h-screen flex flex-col">
+    <!-- Header -->
+    <div class="header-wrapper">
+        <div data-section-id="common_header_web" data-section-type="common_header" class="navbar bg-base-100 px-8 py-4 shadow-tech sticky top-0 z-50 glass-panel">
+    <!-- Logo Section -->
+    <div class="navbar-start">
+        <div class="dropdown lg:hidden">
+            <div tabindex="0" role="button" class="btn btn-ghost" onclick="toggleMobileMenu()">
+                <span class="iconify" data-icon="heroicons:bars-3" data-width="24"></span>
+            </div>
+            <ul tabindex="0" class="menu menu-sm dropdown-content mt-3 z-50 p-2 shadow-tech bg-base-200 rounded-box w-52 hidden" data-mobile-menu="">
+                <li><a onclick="navigateTo(&apos;market_overview_dashboard&apos;)">市场概览</a></li>
+                <li><a onclick="navigateTo(&apos;prediction_analysis_center&apos;)">预测分析</a></li>
+                <li><a onclick="navigateTo(&apos;agent_comparison_module&apos;)">智能体对比</a></li>
+                <li><a onclick="navigateTo(&apos;agent_evaluation_page&apos;)">模型评估</a></li>
+                <li><a onclick="navigateTo(&apos;personalization_settings_center&apos;)">个人设置</a></li>
+            </ul>
+        </div>
+        <a onclick="navigateTo(&apos;market_overview_dashboard&apos;)" class="text-2xl font-heading font-bold text-primary cursor-pointer flex items-center gap-2">
+            <span class="iconify" data-icon="heroicons:chart-bar" data-width="28"></span>
+            智能投研系统
+        </a>
+    </div>
+
+    <!-- Navigation Menu -->
+    <div class="navbar-center hidden lg:flex">
+        <ul class="menu menu-horizontal px-1 gap-6">
+            <li><a onclick="navigateTo(&apos;market_overview_dashboard&apos;)" class="nav-item text-base font-medium">市场概览</a></li>
+            <li><a onclick="navigateTo(&apos;prediction_analysis_center&apos;)" class="nav-item text-base font-medium">预测分析</a></li>
+            <li><a onclick="navigateTo(&apos;agent_comparison_module&apos;)" class="nav-item text-base font-medium">智能体对比</a></li>
+            <li><a onclick="navigateTo(&apos;agent_evaluation_page&apos;)" class="nav-item text-base font-medium">模型评估</a></li>
+            <li><a onclick="navigateTo(&apos;personalization_settings_center&apos;)" class="nav-item text-base font-medium">个人设置</a></li>
+        </ul>
+    </div>
+
+    <!-- Stock Search Bar -->
+    <div class="navbar-center hidden lg:flex lg:mx-8 flex-1 max-w-md">
+        <div class="join w-full">
+            <input type="text" placeholder="搜索股票代码或名称..." class="input input-bordered join-item flex-1 bg-base-200" data-stock-search-input="" onkeypress="if(event.key===&apos;Enter&apos;) handleStockSearch()">
+            <button class="btn btn-primary join-item" onclick="handleStockSearch()">
+                <span class="iconify" data-icon="heroicons:magnifying-glass" data-width="20"></span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Right Side Icons -->
+    <div class="navbar-end gap-3">
+        <!-- Theme Toggle -->
+        <button class="btn btn-ghost btn-circle" onclick="toggleTheme()" title="切换主题">
+            <span class="iconify" data-icon="heroicons:sun" data-width="24"></span>
+        </button>
+
+        <!-- System Notifications -->
+        <button class="btn btn-ghost btn-circle" onclick="navigateTo(&apos;alert_settings_page&apos;)" title="系统通知">
+            <div class="indicator">
+                <span class="iconify" data-icon="heroicons:bell" data-width="24"></span>
+                <span class="badge badge-xs badge-secondary indicator-item"></span>
+            </div>
+        </button>
+
+        <!-- Watchlist -->
+        <button class="btn btn-ghost btn-circle" onclick="navigateTo(&apos;watchlist_management&apos;)" title="自选股">
+            <div class="indicator">
+                <span class="iconify" data-icon="heroicons:star" data-width="24"></span>
+                <span class="badge badge-xs badge-accent indicator-item">5</span>
+            </div>
+        </button>
+
+        <!-- User Profile -->
+        <div class="dropdown dropdown-end">
+            <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">
+                <div class="avatar placeholder inline-flex items-center justify-center w-10 h-10 rounded-full bg-primary text-primary-content">
+                    <span class="flex items-center justify-center h-full font-semibold text-lg">U</span>
+                </div>
+            </div>
+            <ul tabindex="0" class="menu menu-sm dropdown-content mt-3 z-50 p-2 shadow-tech bg-base-200 rounded-box w-52">
+                <li><a onclick="navigateTo(&apos;user_profile_management&apos;)" class="justify-between">个人资料<span class="badge badge-sm badge-primary">Pro</span></a></li>
+                <li><a onclick="navigateTo(&apos;prediction_preference_settings&apos;)">预测偏好</a></li>
+                <li><a onclick="navigateTo(&apos;alert_settings_page&apos;)">预警设置</a></li>
+                <li><hr class="border-base-300"></li>
+                <li><a onclick="navigateTo(&apos;help_support_page&apos;)">帮助支持</a></li>
+                <li><a onclick="APP_GLOBALS.user.logout()">退出登录</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<style>
+[data-section-id="common_header_web"] .navbar {
+    border-bottom: var(--border) solid var(--color-base-300);
+    backdrop-filter: blur(10px);
+}
+
+[data-section-id="common_header_web"] .nav-item:hover {
+    color: var(--color-secondary);
+    text-shadow: 0 0 8px rgba(51, 255, 204, 0.5);
+}
+
+[data-section-id="common_header_web"] .input:focus {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+    box-shadow: 0 0 12px rgba(102, 102, 255, 0.3);
+}
+
+[data-section-id="common_header_web"] .dropdown:hover .dropdown-content {
+    display: block;
+}
+
+[data-section-id="common_header_web"] .btn-circle:hover {
+    background-color: rgba(102, 102, 255, 0.1);
+    color: var(--color-primary);
+    box-shadow: 0 0 12px rgba(102, 102, 255, 0.3);
+}
+
+[data-section-id="common_header_web"] .avatar:hover {
+    box-shadow: 0 0 12px rgba(102, 102, 255, 0.4);
+}
+</style>
+
+<script>
+(function() {
+    // Close mobile menu when clicking outside
+    document.addEventListener(&apos;click&apos;, function(e) {
+        const mobileMenu = document.querySelector(&apos;[data-mobile-menu]&apos;);
+        const menuButton = e.target.closest(&apos;.dropdown&apos;);
+        
+        if (mobileMenu && !menuButton && !mobileMenu.contains(e.target)) {
+            mobileMenu.classList.add(&apos;hidden&apos;);
+        }
+    });
+
+    // Enhanced stock search with suggestions
+    const searchInput = document.querySelector(&apos;[data-stock-search-input]&apos;);
+    if (searchInput) {
+        searchInput.addEventListener(&apos;input&apos;, function(e) {
+            const value = e.target.value.trim();
+            if (value.length >= 2) {
+                // Add search suggestions logic here if needed
+                // For now, just validate input format
+                if (/^[A-Za-z0-9]+$/.test(value)) {
+                    e.target.classList.remove(&apos;input-error&apos;);
+                    e.target.classList.add(&apos;input-success&apos;);
+                } else {
+                    e.target.classList.remove(&apos;input-success&apos;);
+                    e.target.classList.add(&apos;input-error&apos;);
+                }
+            } else {
+                e.target.classList.remove(&apos;input-success&apos;, &apos;input-error&apos;);
+            }
+        });
+    }
+
+    // Update user info in header if logged in
+    function updateUserDisplay() {
+        const userAvatar = document.querySelector(&apos;.avatar span&apos;);
+        if (userAvatar && window.APP_GLOBALS.user.isLoggedIn) {
+            userAvatar.textContent = window.APP_GLOBALS.user.username.charAt(0).toUpperCase();
+        }
+    }
+
+    // Initialize user display
+    updateUserDisplay();
+})();
+</script>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content-wrapper flex-1 px-8 py-8">
+        <!-- Page Header -->
+        <section class="mb-8">
+            <div class="flex items-center gap-4 mb-4">
+                <button onclick="navigateTo(&apos;market_overview_dashboard&apos;)" class="btn btn-ghost btn-sm text-secondary hover:glow-secondary">
+                    <span class="iconify" data-icon="heroicons:arrow-left" data-width="20"></span>
+                    返回仪表盘
+                </button>
+            </div>
+            <div class="mb-2">
+                <h1 class="text-4xl font-bold text-primary glow-primary">智能体表现评估</h1>
+            </div>
+            <p class="text-lg text-base-content/80">深入分析模型性能瓶颈，调整核心参数并追踪模型优化轨迹</p>
+        </section>
+
+        <!-- Time Error Analysis Report -->
+        <section class="mb-8">
+            <div class="glass-panel rounded-lg p-6 shadow-tech-lg">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-2xl font-bold text-secondary">预测误差趋势</h2>
+                    <div class="flex items-center gap-4">
+                        <select class="select select-bordered select-sm bg-base-200" id="timeRangeSelect">
+                            <option value="day">日</option>
+                            <option value="week" selected="">周</option>
+                            <option value="month">月</option>
+                            <option value="custom">自定义</option>
+                        </select>
+                        <button class="btn btn-ghost btn-sm text-accent hover:glow-accent" onclick="downloadReport()">
+                            <span class="iconify" data-icon="heroicons:arrow-down-tray" data-width="16"></span>
+                            下载报告
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Error Metrics Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                    <div class="card bg-base-200 shadow-tech" data-repeatable="true">
+                        <div class="card-body p-4">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm text-base-content/60">平均误差</p>
+                                    <p class="text-2xl font-bold text-primary">2.34%</p>
+                                </div>
+                                <span class="iconify text-primary" data-icon="heroicons:chart-bar" data-width="32"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card bg-base-200 shadow-tech" data-repeatable="true">
+                        <div class="card-body p-4">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm text-base-content/60">最大误差</p>
+                                    <p class="text-2xl font-bold text-error">8.91%</p>
+                                </div>
+                                <span class="iconify text-error" data-icon="heroicons:arrow-trending-up" data-width="32"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card bg-base-200 shadow-tech" data-repeatable="true">
+                        <div class="card-body p-4">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm text-base-content/60">最小误差</p>
+                                    <p class="text-2xl font-bold text-success">0.12%</p>
+                                </div>
+                                <span class="iconify text-success" data-icon="heroicons:arrow-trending-down" data-width="32"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chart Area -->
+                <div class="bg-base-300/50 rounded-lg p-4 min-h-80 relative overflow-hidden">
+                    <div class="absolute inset-0 opacity-10 bg-circuit-pattern"></div>
+                    <canvas id="errorTrendChart" class="relative z-10"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- Parameter Tuning Interface -->
+        <section class="mb-8">
+            <div class="glass-panel rounded-lg p-6 shadow-tech-lg">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-2xl font-bold text-secondary">核心参数调优</h2>
+                    <div class="flex items-center gap-2">
+                        <button class="btn btn-ghost btn-sm" onclick="resetParameters()">
+                            <span class="iconify" data-icon="heroicons:arrow-path" data-width="16"></span>
+                            重置参数
+                        </button>
+                        <button class="btn btn-primary btn-sm" onclick="saveConfiguration()">
+                            <span class="iconify" data-icon="heroicons:check" data-width="16"></span>
+                            保存配置
+                        </button>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- Parameter Controls -->
+                    <div class="space-y-6">
+                        <!-- Model Hyperparameters -->
+                        <div class="collapse collapse-arrow bg-base-200">
+                            <input type="radio" name="param-accordion" checked="checked">
+                            <div class="collapse-title font-medium flex items-center gap-2">
+                                <span class="iconify text-primary" data-icon="heroicons:cog-6-tooth" data-width="20"></span>
+                                <span>模型超参数</span>
+                            </div>
+                            <div class="collapse-content space-y-4">
+                                <div class="form-control">
+                                    <label class="label">
+                                        <span class="label-text">学习率</span>
+                                        <span class="label-text-alt text-accent" id="learningRateValue">0.001</span>
+                                    </label>
+                                    <input type="range" min="0.0001" max="0.01" step="0.0001" value="0.001" class="range range-primary" id="learningRateSlider">
+                                </div>
+                                <div class="form-control">
+                                    <label class="label">
+                                        <span class="label-text">批次大小</span>
+                                        <span class="label-text-alt text-accent" id="batchSizeValue">32</span>
+                                    </label>
+                                    <input type="range" min="16" max="128" step="16" value="32" class="range range-primary" id="batchSizeSlider">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Training Strategy -->
+                        <div class="collapse collapse-arrow bg-base-200">
+                            <input type="radio" name="param-accordion">
+                            <div class="collapse-title font-medium flex items-center gap-2">
+                                <span class="iconify text-secondary" data-icon="heroicons:academic-cap" data-width="20"></span>
+                                <span>训练策略参数</span>
+                            </div>
+                            <div class="collapse-content space-y-4">
+                                <div class="form-control">
+                                    <label class="label">
+                                        <span class="label-text">训练轮数</span>
+                                        <span class="label-text-alt text-accent" id="epochsValue">100</span>
+                                    </label>
+                                    <input type="range" min="50" max="500" step="10" value="100" class="range range-secondary" id="epochsSlider">
+                                </div>
+                                <div class="form-control">
+                                    <label class="label">
+                                        <span class="label-text">正则化强度</span>
+                                        <span class="label-text-alt text-accent" id="regularizationValue">0.01</span>
+                                    </label>
+                                    <input type="range" min="0.001" max="0.1" step="0.001" value="0.01" class="range range-secondary" id="regularizationSlider">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Real-time Preview Chart -->
+                    <div class="bg-base-300/50 rounded-lg p-4 min-h-80 relative overflow-hidden">
+                        <h3 class="text-lg font-semibold text-base-content mb-4">参数敏感性分析</h3>
+                        <div class="absolute inset-0 opacity-10 bg-geometric-pattern"></div>
+                        <canvas id="sensitivityChart" class="relative z-10"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Model Iteration History -->
+        <section class="mb-8">
+            <div class="glass-panel rounded-lg p-6 shadow-tech-lg">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-2xl font-bold text-secondary">模型迭代记录</h2>
+                    <div class="flex items-center gap-4">
+                        <div class="join">
+                            <input class="input input-bordered join-item input-sm w-48" placeholder="搜索改进说明..." id="iterationSearch">
+                            <button class="btn join-item btn-sm">
+                                <span class="iconify" data-icon="heroicons:magnifying-glass" data-width="16"></span>
+                            </button>
+                        </div>
+                        <select class="select select-bordered select-sm bg-base-200" id="performanceFilter">
+                            <option value="">所有性能</option>
+                            <option value="high">准确率 &gt; 90%</option>
+                            <option value="medium">准确率 &gt; 80%</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="table table-zebra">
+                        <thead>
+                            <tr class="bg-base-200">
+                                <th class="cursor-pointer hover:bg-base-300" onclick="sortTable(&apos;version&apos;)">
+                                    <div class="flex items-center gap-2">
+                                        <span>版本号</span>
+                                        <span class="iconify" data-icon="heroicons:arrows-up-down" data-width="16"></span>
+                                    </div>
+                                </th>
+                                <th class="cursor-pointer hover:bg-base-300" onclick="sortTable(&apos;date&apos;)">
+                                    <div class="flex items-center gap-2">
+                                        <span>迭代日期</span>
+                                        <span class="iconify" data-icon="heroicons:arrows-up-down" data-width="16"></span>
+                                    </div>
+                                </th>
+                                <th>主要改进</th>
+                                <th class="cursor-pointer hover:bg-base-300" onclick="sortTable(&apos;accuracy&apos;)">
+                                    <div class="flex items-center gap-2">
+                                        <span>准确率</span>
+                                        <span class="iconify" data-icon="heroicons:arrows-up-down" data-width="16"></span>
+                                    </div>
+                                </th>
+                                <th>召回率</th>
+                                <th>F1分数</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="hover:bg-base-200/50 cursor-pointer" onclick="expandRow(this)" data-repeatable="true">
+                                <td class="font-mono text-primary">v2.3.1</td>
+                                <td>2025-01-08</td>
+                                <td>优化LSTM网络结构，增加注意力机制</td>
+                                <td><span class="badge badge-success">94.2%</span></td>
+                                <td><span class="badge badge-outline">91.8%</span></td>
+                                <td><span class="badge badge-outline">93.0%</span></td>
+                                <td>
+                                    <button class="btn btn-ghost btn-xs text-info">
+                                        <span class="iconify" data-icon="heroicons:eye" data-width="16"></span>
+                                    </button>
+                                    <button class="btn btn-ghost btn-xs text-accent">
+                                        <span class="iconify" data-icon="heroicons:arrow-down-tray" data-width="16"></span>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-base-200/50 cursor-pointer" onclick="expandRow(this)" data-repeatable="true">
+                                <td class="font-mono text-primary">v2.3.0</td>
+                                <td>2025-01-05</td>
+                                <td>引入多头注意力机制，提升长期依赖建模</td>
+                                <td><span class="badge badge-success">92.7%</span></td>
+                                <td><span class="badge badge-outline">90.3%</span></td>
+                                <td><span class="badge badge-outline">91.5%</span></td>
+                                <td>
+                                    <button class="btn btn-ghost btn-xs text-info">
+                                        <span class="iconify" data-icon="heroicons:eye" data-width="16"></span>
+                                    </button>
+                                    <button class="btn btn-ghost btn-xs text-accent">
+                                        <span class="iconify" data-icon="heroicons:arrow-down-tray" data-width="16"></span>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-base-200/50 cursor-pointer" onclick="expandRow(this)" data-repeatable="true">
+                                <td class="font-mono text-primary">v2.2.8</td>
+                                <td>2025-01-02</td>
+                                <td>数据预处理优化，增强特征工程</td>
+                                <td><span class="badge badge-warning">89.1%</span></td>
+                                <td><span class="badge badge-outline">87.6%</span></td>
+                                <td><span class="badge badge-outline">88.3%</span></td>
+                                <td>
+                                    <button class="btn btn-ghost btn-xs text-info">
+                                        <span class="iconify" data-icon="heroicons:eye" data-width="16"></span>
+                                    </button>
+                                    <button class="btn btn-ghost btn-xs text-accent">
+                                        <span class="iconify" data-icon="heroicons:arrow-down-tray" data-width="16"></span>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Model Training Logs -->
+        <section class="mb-8">
+            <div class="glass-panel rounded-lg p-6 shadow-tech-lg">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-2xl font-bold text-secondary">模型训练实时日志</h2>
+                    <div class="flex items-center gap-4">
+                        <select class="select select-bordered select-sm bg-base-200" id="logLevelFilter">
+                            <option value="">所有等级</option>
+                            <option value="INFO">INFO</option>
+                            <option value="WARNING">WARNING</option>
+                            <option value="ERROR">ERROR</option>
+                            <option value="DEBUG">DEBUG</option>
+                        </select>
+                        <div class="join">
+                            <input class="input input-bordered join-item input-sm w-48" placeholder="搜索日志内容..." id="logSearch">
+                            <button class="btn join-item btn-sm">
+                                <span class="iconify" data-icon="heroicons:magnifying-glass" data-width="16"></span>
+                            </button>
+                        </div>
+                        <button class="btn btn-ghost btn-sm text-accent" onclick="downloadLogs()">
+                            <span class="iconify" data-icon="heroicons:arrow-down-tray" data-width="16"></span>
+                            下载日志
+                        </button>
+                    </div>
+                </div>
+
+                <div class="bg-black rounded-lg p-4 h-80 overflow-y-auto font-mono text-sm" id="logContainer">
+                    <div class="space-y-1">
+                        <div class="flex items-start gap-2" data-repeatable="true">
+                            <span class="text-base-content/60 text-xs">2025-01-11 14:32:15</span>
+                            <span class="badge badge-info badge-xs">INFO</span>
+                            <span class="text-success">开始训练第 1/100 轮...</span>
+                        </div>
+                        <div class="flex items-start gap-2" data-repeatable="true">
+                            <span class="text-base-content/60 text-xs">2025-01-11 14:32:16</span>
+                            <span class="badge badge-info badge-xs">INFO</span>
+                            <span class="text-base-content">批次 1/32: 损失 = 0.2341, 准确率 = 87.5%</span>
+                        </div>
+                        <div class="flex items-start gap-2" data-repeatable="true">
+                            <span class="text-base-content/60 text-xs">2025-01-11 14:32:17</span>
+                            <span class="badge badge-warning badge-xs">WARNING</span>
+                            <span class="text-warning">梯度范数较大: 2.34, 建议调整学习率</span>
+                        </div>
+                        <div class="flex items-start gap-2" data-repeatable="true">
+                            <span class="text-base-content/60 text-xs">2025-01-11 14:32:18</span>
+                            <span class="badge badge-info badge-xs">INFO</span>
+                            <span class="text-base-content">批次 2/32: 损失 = 0.2298, 准确率 = 88.1%</span>
+                        </div>
+                        <div class="flex items-start gap-2" data-repeatable="true">
+                            <span class="text-base-content/60 text-xs">2025-01-11 14:32:19</span>
+                            <span class="badge badge-success badge-xs">DEBUG</span>
+                            <span class="text-secondary">内存使用: 2.1GB / 8.0GB</span>
+                        </div>
+                        <div class="flex items-start gap-2" data-repeatable="true">
+                            <span class="text-base-content/60 text-xs">2025-01-11 14:32:20</span>
+                            <span class="badge badge-error badge-xs">ERROR</span>
+                            <span class="text-error">数据加载异常: 文件 data_batch_5.pkl 不存在</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer-wrapper">
+        <div data-section-id="common_footer_web" data-section-type="common_footer" class="bg-base-200">
+    <!-- Main Footer Content -->
+    <footer class="footer footer-horizontal p-12 text-base-content">
+        <!-- About Section -->
+        <aside>
+            <div class="flex items-center gap-2 mb-4">
+                <span class="iconify text-primary" data-icon="heroicons:chart-bar" data-width="32"></span>
+                <span class="text-2xl font-heading font-bold text-primary">智能投研系统</span>
+            </div>
+            <p class="text-sm leading-relaxed max-w-xs">基于多智能体强化学习的股票预测系统，专为时序数据分析与金融预测研究设计。帮助学生和研究者理解AI在金融领域的应用。</p>
+            <div class="flex gap-4 mt-4">
+                <a class="btn btn-ghost btn-sm btn-circle" title="GitHub项目">
+                    <span class="iconify" data-icon="mdi:github" data-width="20"></span>
+                </a>
+                <a class="btn btn-ghost btn-sm btn-circle" title="技术文档">
+                    <span class="iconify" data-icon="heroicons:document-text" data-width="20"></span>
+                </a>
+                <a class="btn btn-ghost btn-sm btn-circle" title="学术论文">
+                    <span class="iconify" data-icon="heroicons:academic-cap" data-width="20"></span>
+                </a>
+                <a class="btn btn-ghost btn-sm btn-circle" title="邮件联系">
+                    <span class="iconify" data-icon="heroicons:envelope" data-width="20"></span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Core Features -->
+        <nav>
+            <header class="footer-title text-primary font-heading">核心功能</header>
+            <a class="link link-hover" onclick="navigateTo(&apos;market_overview_dashboard&apos;)">市场概览仪表盘</a>
+            <a class="link link-hover" onclick="navigateTo(&apos;prediction_analysis_center&apos;)">预测结果分析</a>
+            <a class="link link-hover" onclick="navigateTo(&apos;agent_comparison_module&apos;)">智能体对比</a>
+            <a class="link link-hover" onclick="navigateTo(&apos;agent_evaluation_page&apos;)">模型性能评估</a>
+            <a class="link link-hover" onclick="navigateTo(&apos;watchlist_management&apos;)">自选股管理</a>
+        </nav>
+
+        <!-- Research Tools -->
+        <nav>
+            <header class="footer-title text-primary font-heading">研究工具</header>
+            <a class="link link-hover" onclick="navigateTo(&apos;prediction_preference_settings&apos;)">预测偏好配置</a>
+            <a class="link link-hover" onclick="navigateTo(&apos;alert_settings_page&apos;)">时序预警设置</a>
+            <a class="link link-hover">历史回溯测试</a>
+            <a class="link link-hover">参数调优界面</a>
+            <a class="link link-hover">模型迭代记录</a>
+        </nav>
+
+        <!-- Learning Resources -->
+        <nav>
+            <header class="footer-title text-primary font-heading">学习资源</header>
+            <a class="link link-hover" onclick="navigateTo(&apos;help_support_page&apos;)">系统使用指南</a>
+            <a class="link link-hover">算法原理解释</a>
+            <a class="link link-hover">时序分析教程</a>
+            <a class="link link-hover">强化学习基础</a>
+            <a class="link link-hover">金融数据科学</a>
+            <a class="link link-hover">常见问题解答</a>
+        </nav>
+
+        <!-- Account & Support -->
+        <nav>
+            <header class="footer-title text-primary font-heading">账户支持</header>
+            <a class="link link-hover" onclick="navigateTo(&apos;login_page&apos;)">用户登录</a>
+            <a class="link link-hover" onclick="navigateTo(&apos;registration_page&apos;)">注册账户</a>
+            <a class="link link-hover" onclick="navigateTo(&apos;user_profile_management&apos;)">个人资料</a>
+            <a class="link link-hover" onclick="navigateTo(&apos;help_support_page&apos;)">技术支持</a>
+            <a class="link link-hover">隐私政策</a>
+            <a class="link link-hover">使用条款</a>
+        </nav>
+    </footer>
+
+    <!-- Bottom Copyright Bar -->
+    <footer class="footer footer-center p-6 bg-base-300 text-base-content border-t border-base-content/10">
+        <aside>
+            <div class="flex flex-col sm:flex-row items-center justify-between w-full max-w-6xl gap-4">
+                <p class="text-sm">© 2025 多智能体强化学习股票预测系统. 版权所有.
+                    <span class="text-base-content/70">面向学生科研的专业化AI金融工具.</span>
+                </p>
+                <div class="flex items-center gap-6 text-sm">
+                    <a class="link link-hover">开源协议</a>
+                    <a class="link link-hover">学术引用</a>
+                    <div class="flex items-center gap-2">
+                        <span class="iconify" data-icon="heroicons:shield-check" data-width="16"></span>
+                        <span>学术研究用途</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="iconify" data-icon="heroicons:cpu-chip" data-width="16"></span>
+                        <span>AI驱动分析</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </footer>
+</div>
+
+<style>
+[data-section-id="common_footer_web"] .footer-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: var(--color-primary);
+}
+
+[data-section-id="common_footer_web"] .link-hover:hover {
+    color: var(--color-secondary);
+    text-shadow: 0 0 4px rgba(51, 255, 204, 0.3);
+    transition: all 0.15s ease-in-out;
+}
+
+[data-section-id="common_footer_web"] .btn-circle:hover {
+    background-color: rgba(102, 102, 255, 0.1);
+    color: var(--color-primary);
+    box-shadow: 0 0 12px rgba(102, 102, 255, 0.3);
+    transform: translateY(-2px);
+}
+
+[data-section-id="common_footer_web"] aside p {
+    color: var(--color-base-content);
+    opacity: 0.8;
+}
+
+[data-section-id="common_footer_web"] .bg-base-300 {
+    background: linear-gradient(135deg, var(--color-base-300) 0%, rgba(26, 26, 26, 0.8) 100%);
+}
+</style>
+
+<script>
+(function() {
+    // Add footer-specific JavaScript functionality
+    
+    // Analytics tracking for footer links (placeholder)
+    const footerLinks = document.querySelectorAll(&apos;[data-section-id="common_footer_web"] .link-hover&apos;);
+    footerLinks.forEach(link => {
+        link.addEventListener(&apos;click&apos;, function(e) {
+            const linkText = e.target.textContent.trim();
+            // Analytics tracking placeholder
+            console.log(`Footer link clicked: ${linkText}`);
+        });
+    });
+
+    // Social media links handling
+    const socialButtons = document.querySelectorAll(&apos;[data-section-id="common_footer_web"] .btn-circle&apos;);
+    socialButtons.forEach(button => {
+        button.addEventListener(&apos;click&apos;, function(e) {
+            e.preventDefault();
+            const icon = e.currentTarget.querySelector(&apos;.iconify&apos;);
+            const iconName = icon?.getAttribute(&apos;data-icon&apos;);
+            
+            // Handle different social/external links
+            switch(iconName) {
+                case &apos;mdi:github&apos;:
+                    window.open(&apos;https://github.com&apos;, &apos;_blank&apos;);
+                    break;
+                case &apos;heroicons:document-text&apos;:
+                    showSystemNotification(&apos;技术文档正在准备中...&apos;, &apos;info&apos;);
+                    break;
+                case &apos;heroicons:academic-cap&apos;:
+                    showSystemNotification(&apos;学术论文即将发布...&apos;, &apos;info&apos;);
+                    break;
+                case &apos;heroicons:envelope&apos;:
+                    window.location.href = &apos;mailto:support@stock-prediction-system.com&apos;;
+                    break;
+                default:
+                    console.log(&apos;Footer button clicked:&apos;, iconName);
+            }
+        });
+    });
+
+    // Copyright year auto-update (if needed)
+    const currentYear = new Date().getFullYear();
+    const copyrightElement = document.querySelector(&apos;[data-section-id="common_footer_web"] .footer-center p&apos;);
+    if (copyrightElement && currentYear > 2025) {
+        copyrightElement.innerHTML = copyrightElement.innerHTML.replace(&apos;2025&apos;, currentYear);
+    }
+})();
+</script>
+    </div>
+
+    <script>
+(function() {
+    // Initialize global namespace for app
+    window.APP_GLOBALS = window.APP_GLOBALS || {};
+
+    // Navigation function for page transitions
+    window.navigateTo = function(targetPageId) {
+        const isInIframe = window.self !== window.top;
+        const targetFileName = `${targetPageId}.html`;
+        
+        if (isInIframe) {
+            window.parent.postMessage({
+                type: &apos;iframeNavigation&apos;,
+                targetPageId: targetPageId
+            }, &apos;*&apos;);
+        } else {
+            window.location.href = targetFileName;
+        }
+    };
+
+    // Stock search functionality
+    window.handleStockSearch = function() {
+        const searchInput = document.querySelector(&apos;[data-stock-search-input]&apos;);
+        if (searchInput && searchInput.value.trim()) {
+            // Store search term for results page
+            sessionStorage.setItem(&apos;stockSearchTerm&apos;, searchInput.value.trim());
+            navigateTo(&apos;market_overview_dashboard&apos;);
+        }
+    };
+
+    // Mobile menu toggle
+    window.toggleMobileMenu = function() {
+        const mobileMenu = document.querySelector(&apos;[data-mobile-menu]&apos;);
+        if (mobileMenu) {
+            mobileMenu.classList.toggle(&apos;hidden&apos;);
+        }
+    };
+
+    // Notification system for system alerts
+    window.showSystemNotification = function(message, type = &apos;info&apos;) {
+        const toast = document.createElement(&apos;div&apos;);
+        toast.className = &apos;toast toast-end toast-top z-50&apos;;
+        
+        const alertClass = type === &apos;success&apos; ? &apos;alert-success&apos; : 
+                          type === &apos;error&apos; ? &apos;alert-error&apos; : 
+                          type === &apos;warning&apos; ? &apos;alert-warning&apos; : &apos;alert-info&apos;;
+        
+        const iconName = type === &apos;success&apos; ? &apos;heroicons:check-circle&apos; : 
+                        type === &apos;error&apos; ? &apos;heroicons:x-circle&apos; : 
+                        type === &apos;warning&apos; ? &apos;heroicons:exclamation-triangle&apos; : 
+                        &apos;heroicons:information-circle&apos;;
+        
+        toast.innerHTML = `
+            <div class="alert ${alertClass}">
+                <span class="iconify" data-icon="${iconName}" data-width="20"></span>
+                <span>${message}</span>
+            </div>
+        `;
+        
+        document.body.appendChild(toast);
+        
+        setTimeout(() => {
+            toast.remove();
+        }, 5000);
+    };
+
+    // Theme toggle functionality for dark/light modes
+    window.toggleTheme = function() {
+        const html = document.documentElement;
+        const currentTheme = html.getAttribute(&apos;data-theme&apos;);
+        const newTheme = currentTheme === &apos;black&apos; ? &apos;dark&apos; : &apos;black&apos;;
+        html.setAttribute(&apos;data-theme&apos;, newTheme);
+        localStorage.setItem(&apos;theme&apos;, newTheme);
+    };
+
+    // Initialize theme on load
+    window.initializeTheme = function() {
+        const savedTheme = localStorage.getItem(&apos;theme&apos;) || &apos;black&apos;;
+        document.documentElement.setAttribute(&apos;data-theme&apos;, savedTheme);
+    };
+
+    // User session management
+    window.APP_GLOBALS.user = {
+        isLoggedIn: localStorage.getItem(&apos;userLoggedIn&apos;) === &apos;true&apos;,
+        username: localStorage.getItem(&apos;username&apos;) || &apos;用户&apos;,
+        email: localStorage.getItem(&apos;userEmail&apos;) || &apos;&apos;,
+        
+        login: function(username, email) {
+            this.isLoggedIn = true;
+            this.username = username;
+            this.email = email;
+            localStorage.setItem(&apos;userLoggedIn&apos;, &apos;true&apos;);
+            localStorage.setItem(&apos;username&apos;, username);
+            localStorage.setItem(&apos;userEmail&apos;, email);
+        },
+        
+        logout: function() {
+            this.isLoggedIn = false;
+            this.username = &apos;用户&apos;;
+            this.email = &apos;&apos;;
+            localStorage.removeItem(&apos;userLoggedIn&apos;);
+            localStorage.removeItem(&apos;username&apos;);
+            localStorage.removeItem(&apos;userEmail&apos;);
+            navigateTo(&apos;login_page&apos;);
+        }
+    };
+
+    // Initialize theme when script loads
+    initializeTheme();
+})();
+</script>
+    <script>
+(function() {
+    // Initialize charts (placeholder implementations)
+    let errorTrendChart = null;
+    let sensitivityChart = null;
+
+    // Initialize page
+    document.addEventListener(&apos;DOMContentLoaded&apos;, function() {
+        initializeCharts();
+        initializeParameterSliders();
+        initializeLogAutoScroll();
+        initializeTableSorting();
+        initializeFilters();
+    });
+
+    // Chart initialization
+    function initializeCharts() {
+        // Error Trend Chart (placeholder)
+        const errorCanvas = document.getElementById(&apos;errorTrendChart&apos;);
+        if (errorCanvas) {
+            const ctx = errorCanvas.getContext(&apos;2d&apos;);
+            // Placeholder chart drawing
+            ctx.strokeStyle = &apos;rgba(102, 102, 255, 0.8)&apos;;
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(50, 200);
+            ctx.lineTo(150, 150);
+            ctx.lineTo(250, 180);
+            ctx.lineTo(350, 120);
+            ctx.lineTo(450, 160);
+            ctx.stroke();
+        }
+
+        // Sensitivity Chart (placeholder)
+        const sensitivityCanvas = document.getElementById(&apos;sensitivityChart&apos;);
+        if (sensitivityCanvas) {
+            const ctx = sensitivityCanvas.getContext(&apos;2d&apos;);
+            // Placeholder chart drawing
+            ctx.strokeStyle = &apos;rgba(51, 255, 204, 0.8)&apos;;
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(50, 150);
+            ctx.lineTo(150, 120);
+            ctx.lineTo(250, 140);
+            ctx.lineTo(350, 100);
+            ctx.stroke();
+        }
+    }
+
+    // Parameter slider initialization
+    function initializeParameterSliders() {
+        const sliders = [
+            { slider: &apos;learningRateSlider&apos;, display: &apos;learningRateValue&apos; },
+            { slider: &apos;batchSizeSlider&apos;, display: &apos;batchSizeValue&apos; },
+            { slider: &apos;epochsSlider&apos;, display: &apos;epochsValue&apos; },
+            { slider: &apos;regularizationSlider&apos;, display: &apos;regularizationValue&apos; }
+        ];
+
+        sliders.forEach(({ slider, display }) => {
+            const sliderElement = document.getElementById(slider);
+            const displayElement = document.getElementById(display);
+            
+            if (sliderElement && displayElement) {
+                sliderElement.addEventListener(&apos;input&apos;, function() {
+                    displayElement.textContent = this.value;
+                    updateSensitivityChart();
+                });
+            }
+        });
+    }
+
+    // Update sensitivity chart when parameters change
+    function updateSensitivityChart() {
+        // Placeholder implementation
+        const canvas = document.getElementById(&apos;sensitivityChart&apos;);
+        if (canvas) {
+            const ctx = canvas.getContext(&apos;2d&apos;);
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Redraw with new parameters (placeholder)
+            ctx.strokeStyle = &apos;rgba(51, 255, 204, 0.8)&apos;;
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            const randomOffset = Math.random() * 20;
+            ctx.moveTo(50, 150 + randomOffset);
+            ctx.lineTo(150, 120 + randomOffset);
+            ctx.lineTo(250, 140 + randomOffset);
+            ctx.lineTo(350, 100 + randomOffset);
+            ctx.stroke();
+        }
+    }
+
+    // Auto-scroll logs to bottom
+    function initializeLogAutoScroll() {
+        const logContainer = document.getElementById(&apos;logContainer&apos;);
+        if (logContainer) {
+            // Simulate new log entries
+            setInterval(() => {
+                if (Math.random() > 0.7) { // 30% chance of new log
+                    addNewLogEntry();
+                    logContainer.scrollTop = logContainer.scrollHeight;
+                }
+            }, 3000);
+        }
+    }
+
+    // Add new log entry (simulation)
+    function addNewLogEntry() {
+        const logContainer = document.getElementById(&apos;logContainer&apos;);
+        const logsDiv = logContainer.querySelector(&apos;.space-y-1&apos;);
+        
+        const now = new Date();
+        const timestamp = now.toISOString().slice(0, 19).replace(&apos;T&apos;, &apos; &apos;);
+        
+        const logTypes = [
+            { level: &apos;INFO&apos;, class: &apos;badge-info&apos;, color: &apos;text-base-content&apos; },
+            { level: &apos;WARNING&apos;, class: &apos;badge-warning&apos;, color: &apos;text-warning&apos; },
+            { level: &apos;DEBUG&apos;, class: &apos;badge-success&apos;, color: &apos;text-secondary&apos; }
+        ];
+        
+        const messages = [
+            &apos;批次处理完成: 损失 = 0.{random}, 准确率 = {accuracy}%&apos;,
+            &apos;模型检查点已保存&apos;,
+            &apos;验证集评估完成&apos;,
+            &apos;内存使用: {memory}GB / 8.0GB&apos;
+        ];
+        
+        const logType = logTypes[Math.floor(Math.random() * logTypes.length)];
+        const message = messages[Math.floor(Math.random() * messages.length)]
+            .replace(&apos;{random}&apos;, Math.floor(Math.random() * 9999).toString().padStart(4, &apos;0&apos;))
+            .replace(&apos;{accuracy}&apos;, (85 + Math.random() * 10).toFixed(1))
+            .replace(&apos;{memory}&apos;, (1.5 + Math.random() * 2).toFixed(1));
+        
+        const logEntry = document.createElement(&apos;div&apos;);
+        logEntry.className = &apos;flex items-start gap-2&apos;;
+        logEntry.setAttribute(&apos;data-repeatable&apos;, &apos;true&apos;);
+        logEntry.innerHTML = `
+            <span class="text-base-content/60 text-xs">${timestamp}</span>
+            <span class="badge ${logType.class} badge-xs">${logType.level}</span>
+            <span class="${logType.color}">${message}</span>
+        `;
+        
+        logsDiv.appendChild(logEntry);
+        
+        // Keep only last 50 entries
+        const entries = logsDiv.children;
+        if (entries.length > 50) {
+            logsDiv.removeChild(entries[0]);
+        }
+    }
+
+    // Table sorting functionality
+    function initializeTableSorting() {
+        window.sortTable = function(column) {
+            showSystemNotification(`按 ${column} 排序功能已触发`, &apos;info&apos;);
+        };
+    }
+
+    // Filter functionality
+    function initializeFilters() {
+        const timeRangeSelect = document.getElementById(&apos;timeRangeSelect&apos;);
+        const performanceFilter = document.getElementById(&apos;performanceFilter&apos;);
+        const logLevelFilter = document.getElementById(&apos;logLevelFilter&apos;);
+        
+        if (timeRangeSelect) {
+            timeRangeSelect.addEventListener(&apos;change&apos;, function() {
+                showSystemNotification(`时间范围已切换到: ${this.options[this.selectedIndex].text}`, &apos;info&apos;);
+            });
+        }
+        
+        if (performanceFilter) {
+            performanceFilter.addEventListener(&apos;change&apos;, function() {
+                showSystemNotification(`性能筛选已应用: ${this.options[this.selectedIndex].text}`, &apos;info&apos;);
+            });
+        }
+        
+        if (logLevelFilter) {
+            logLevelFilter.addEventListener(&apos;change&apos;, function() {
+                showSystemNotification(`日志等级筛选: ${this.value || &apos;所有等级&apos;}`, &apos;info&apos;);
+            });
+        }
+    }
+
+    // Button action handlers
+    window.downloadReport = function() {
+        const btn = event.target.closest(&apos;button&apos;);
+        btn.classList.add(&apos;loading&apos;);
+        
+        setTimeout(() => {
+            btn.classList.remove(&apos;loading&apos;);
+            showSystemNotification(&apos;误差分析报告下载完成&apos;, &apos;success&apos;);
+        }, 2000);
+    };
+
+    window.resetParameters = function() {
+        const sliders = document.querySelectorAll(&apos;input[type="range"]&apos;);
+        sliders.forEach(slider => {
+            slider.value = slider.defaultValue;
+            const event = new Event(&apos;input&apos;);
+            slider.dispatchEvent(event);
+        });
+        showSystemNotification(&apos;参数已重置为默认值&apos;, &apos;info&apos;);
+    };
+
+    window.saveConfiguration = function() {
+        const btn = event.target.closest(&apos;button&apos;);
+        btn.classList.add(&apos;loading&apos;);
+        
+        setTimeout(() => {
+            btn.classList.remove(&apos;loading&apos;);
+            showSystemNotification(&apos;参数配置保存成功&apos;, &apos;success&apos;);
+        }, 1500);
+    };
+
+    window.expandRow = function(row) {
+        // Toggle row expansion (placeholder)
+        const isExpanded = row.classList.contains(&apos;expanded&apos;);
+        
+        if (!isExpanded) {
+            row.classList.add(&apos;expanded&apos;);
+            // Create expanded content
+            const expandedRow = document.createElement(&apos;tr&apos;);
+            expandedRow.className = &apos;bg-base-200/30 expanded-content&apos;;
+            expandedRow.innerHTML = `
+                <td colspan="7" class="p-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <h4 class="font-semibold text-primary mb-2">详细更新日志</h4>
+                            <ul class="text-sm space-y-1 text-base-content/80">
+                                <li>• 重构了LSTM层的权重初始化策略</li>
+                                <li>• 优化了梯度裁剪阈值设置</li>
+                                <li>• 增加了Dropout层防止过拟合</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-secondary mb-2">测试结果</h4>
+                            <div class="text-sm space-y-1">
+                                <div>验证集损失: <span class="text-success">0.0847</span></div>
+                                <div>测试集损失: <span class="text-success">0.0923</span></div>
+                                <div>训练时间: <span class="text-accent">2.3小时</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            `;
+            row.parentNode.insertBefore(expandedRow, row.nextSibling);
+        } else {
+            row.classList.remove(&apos;expanded&apos;);
+            const expandedContent = row.nextSibling;
+            if (expandedContent && expandedContent.classList.contains(&apos;expanded-content&apos;)) {
+                expandedContent.remove();
+            }
+        }
+    };
+
+    window.downloadLogs = function() {
+        const btn = event.target.closest(&apos;button&apos;);
+        btn.classList.add(&apos;loading&apos;);
+        
+        setTimeout(() => {
+            btn.classList.remove(&apos;loading&apos;);
+            showSystemNotification(&apos;训练日志下载完成&apos;, &apos;success&apos;);
+        }, 1500);
+    };
+
+    // Search functionality
+    const searchInputs = document.querySelectorAll(&apos;input[placeholder*="搜索"]&apos;);
+    searchInputs.forEach(input => {
+        input.addEventListener(&apos;input&apos;, function() {
+            if (this.value.length > 2) {
+                showSystemNotification(`搜索: "${this.value}"`, &apos;info&apos;);
+            }
+        });
+    });
+})();
+</script>
+
+<script>
+    setTimeout(() => {
+      Holder.run({
+        domain: "placehold.co"
+      })
+    }, 100)
+  </script></body></html>'></iframe>
+                    </div>
+                  </div>
+
+                </body>
+                </html>
+            

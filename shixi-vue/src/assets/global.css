@@ -1,0 +1,74 @@
+/* �������� */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@plugin "daisyui";
+/* Ӧ��Tailwind������ʽ */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* �Զ��幤���� */
+@layer utilities {
+  .content-auto {
+    content-visibility: auto;
+  }
+  .glow-primary {
+    box-shadow: 0 0 20px rgba(102, 102, 255, 0.3);
+  }
+  .glow-secondary {
+    box-shadow: 0 0 20px rgba(51, 255, 204, 0.3);
+  }
+  .glow-accent {
+    box-shadow: 0 0 20px rgba(255, 136, 51, 0.3);
+  }
+  .shadow-tech {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(102, 102, 255, 0.1);
+  }
+  .shadow-tech-lg {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(102, 102, 255, 0.2);
+  }
+  .font-heading {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+  }
+  .font-body {
+    font-family: 'Inter', sans-serif;
+  }
+  .font-mono {
+    font-family: 'JetBrains Mono', monospace;
+  }
+}
+
+/* ȫ����ʽ */
+body {
+  @apply bg-base-100 text-base-content font-body;
+  background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIj48ZmlsdGVyIGlkPSJub2lzZSI+PGZlVHVyYnVsZW5jZSB0eXBlPSJmcmFjdGFsTm9pc2UiIGJhc2VGcmVxdWVuY3k9IjAuNjUiIG51bU9jdGF2ZXM9IjMiIHN0aXRjaFRpbGVzPSJzdGl0Y2giLz48L2ZpbHRlcj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWx0ZXI9InVybCgibm9pc2UpIiBvcGFjaXR5PSIwLjA1Ii8+PC9zdmc+');
+}
+
+h1, h2, h3, h4, h5, h6 {
+  @apply font-heading;
+}
+
+/* ��������ʽ */
+.nav-item {
+  @apply transition-all duration-150 ease-in-out;
+}
+
+.nav-item:hover {
+  @apply text-secondary;
+  text-shadow: 0 0 8px var(--color-secondary);
+}
+
+/* ��ť��ͣЧ�� */
+.btn:hover:not(:disabled) {
+  @apply -translate-y-1 shadow-lg;
+}
+
+/* ����򽹵�Ч�� */
+.input:focus, .select:focus, .textarea:focus {
+  @apply ring-2 ring-primary shadow-lg;
+}
+
+/* ����Ч������ */
+#particles-js {
+  @apply fixed inset-0 z-0;
+}

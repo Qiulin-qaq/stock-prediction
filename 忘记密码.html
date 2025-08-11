@@ -1,0 +1,886 @@
+
+                <!DOCTYPE html>
+                <html lang="zh">
+                <head>
+                  <meta charset="UTF-8">
+                  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                  <title>忘记密码</title>
+                  <style>
+                    *,
+                    *::before,
+                    *::after {
+                      box-sizing: border-box;
+                      margin: 0;
+                    }
+                    .iframe-outer {
+                      position: fixed;
+                      top: 0;
+                      left: 0;
+                      bottom: 0;
+                      right: 0;
+                      display: flex;
+                      justify-content: center;
+                      background-color: #E0E0E0;
+                    }
+                    .iframe-wrapper {
+                      width: 100%;
+                      height: 100%;
+                      margin: 0 auto;
+                      transform-origin: center top;
+                      flex-shrink: 0;
+                    }
+                    #dynamicIframe {
+                      border: none;
+                      width: 100%;
+                      height: 100%;
+                    }
+                  </style>
+                  <script>
+                const width = 1920
+                const height = 1080
+                const resolutionRatio = width && height ? width / height : 1
+                const pageNameMap = {
+                  'login_page': '登录页',
+    'registration_page': '注册页',
+    'forgot_password_page': '忘记密码',
+    'market_overview_dashboard': '市场概览仪表盘',
+    'prediction_analysis_center': '预测结果分析中心',
+    'agent_comparison_module': '智能体模型对比',
+    'agent_evaluation_page': '智能体表现评估',
+    'personalization_settings_center': '个性化设置中心',
+    'watchlist_management': '自选股管理',
+    'prediction_preference_settings': '预测偏好设置',
+    'alert_settings_page': '时序预警设置',
+    'user_profile_management': '用户资料管理',
+    'help_support_page': '帮助与支持'
+                }
+                function setIframeSize(w, h) {
+                  const currentContainerRadio = w / h
+                  let widthValue = w
+                  let heightValue = h
+                  let zoom = 1
+                  if (currentContainerRadio > resolutionRatio) {
+                    widthValue = h * resolutionRatio
+                    heightValue = h
+                  } else {
+                    widthValue = w
+                    heightValue = w / resolutionRatio
+                  }
+                  zoom = width ? widthValue / width : 1
+                  return {
+                    width: widthValue / zoom + 'px',
+                    height: heightValue / zoom + 'px',
+                    zoom,
+                  }
+                }
+                function adjustIframeSize() {
+                  const iframeWrapper = document.querySelector(".iframe-wrapper")
+                  const { width, height, zoom } = setIframeSize(window.innerWidth, window.innerHeight)
+                  iframeWrapper.style.height = height
+                  iframeWrapper.style.width = width
+                  iframeWrapper.style.transform = 'scale(' + zoom + ')'
+                }
+                function sanitizeFilename(name) {
+                  return name.replace(/[\/:*?"<>|]/g, '_')
+                }
+                function handlePostMessage(event) {
+                  if (!event.data) {
+                    return
+                  }
+                  const { type, targetPageId } = event.data
+                  const targetPageName = pageNameMap[targetPageId]
+                  if (type === "iframeNavigation" && targetPageId && targetPageName) {
+                    window.location.href = targetPageName + '.html'
+                  }
+                }
+                window.addEventListener('message', handlePostMessage)
+                window.onload = adjustIframeSize
+                window.onresize = adjustIframeSize
+                window.onunload = () => {
+                  window.removeEventListener('message', handlePostMessage)
+                }
+              </script>
+                </head>
+                <body>
+                  <div class="iframe-outer">
+                    <div class="iframe-wrapper">
+                      <iframe id="dynamicIframe" srcdoc='<html lang="zh-CN" data-theme="black"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>忘记密码 - 智能投研系统</title>
+    <link href="./assets/static/uxbot/daisyui@5.css" rel="stylesheet" type="text/css">
+    <script src="./assets/static/uxbot/tailwind-browser@4.js"></script>
+    <link href="./assets/static/uxbot/daisyui-themes.css" rel="stylesheet" type="text/css">
+    <script src="./assets/3/3.1.1/iconify.min.js"></script>
+    <style>
+/* Import Google Fonts */
+@import url(&apos;https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap&apos;);
+
+/* DaisyUI Theme Variables Customization - Tech Cold Beauty Theme */
+:root {
+    /* Base Colors - Deep Dark Theme */
+    --color-base-100: rgba(0, 0, 0, 1);           /* Pure Black - main backgrounds */
+    --color-base-200: rgba(13, 13, 13, 1);       /* Dark Grey - secondary backgrounds, cards */
+    --color-base-300: rgba(26, 26, 26, 1);       /* Slightly Lighter Dark Grey - borders, separators */
+    --color-base-content: rgba(240, 240, 240, 1); /* Off-white/Light Grey - primary text */
+    
+    /* Fluorescent Accent Colors */
+    --color-primary: rgba(102, 102, 255, 1);      /* Fluorescent Blue-Purple */
+    --color-primary-content: rgba(0, 0, 0, 1);
+    --color-secondary: rgba(51, 255, 204, 1);     /* Fluorescent Cyan-Green */
+    --color-secondary-content: rgba(0, 0, 0, 1);
+    --color-accent: rgba(255, 136, 51, 1);        /* Fluorescent Red-Orange */
+    --color-accent-content: rgba(0, 0, 0, 1);
+    
+    /* Neutral Colors */
+    --color-neutral: rgba(42, 46, 55, 1);
+    --color-neutral-content: rgba(240, 240, 240, 1);
+    
+    /* Semantic Colors - Vibrant for Tech Aesthetic */
+    --color-success: rgba(0, 255, 127, 1);        /* Vibrant neon green */
+    --color-success-content: rgba(0, 0, 0, 1);
+    --color-warning: rgba(255, 191, 0, 1);        /* Bright orange/yellow */
+    --color-warning-content: rgba(0, 0, 0, 1);
+    --color-error: rgba(255, 51, 102, 1);         /* Bold neon red */
+    --color-error-content: rgba(0, 0, 0, 1);
+    --color-info: rgba(0, 191, 255, 1);           /* Clean bright blue */
+    --color-info-content: rgba(0, 0, 0, 1);
+    
+    /* Border radius and effects - Minimal tech aesthetic */
+    --radius-box: 0.25rem;    /* 4px for crisp, tech feel */
+    --radius-field: 0.25rem;
+    --radius-selector: 0.25rem;
+    --border: 1px;
+}
+
+/* Typography */
+.font-heading {
+    font-family: &apos;Inter&apos;, sans-serif;
+    font-weight: 600;
+}
+
+.font-body {
+    font-family: &apos;Inter&apos;, sans-serif;
+}
+
+.font-mono {
+    font-family: &apos;JetBrains Mono&apos;, monospace;
+}
+
+/* Apply fonts globally */
+h1, h2, h3, h4, h5, h6 {
+    font-family: &apos;Inter&apos;, sans-serif;
+    font-weight: 600;
+}
+
+body, p, span, div, button, input, textarea, select {
+    font-family: &apos;Inter&apos;, sans-serif;
+}
+
+/* Tech-cold beauty effects */
+.glow-primary {
+    box-shadow: 0 0 20px rgba(102, 102, 255, 0.3);
+}
+
+.glow-secondary {
+    box-shadow: 0 0 20px rgba(51, 255, 204, 0.3);
+}
+
+.glow-accent {
+    box-shadow: 0 0 20px rgba(255, 136, 51, 0.3);
+}
+
+/* Smooth transitions for interactive elements */
+.nav-item {
+    transition: all 0.15s ease-in-out;
+}
+
+.nav-item:hover {
+    color: var(--color-secondary);
+    text-shadow: 0 0 8px var(--color-secondary);
+}
+
+/* Custom shadows for tech aesthetic - hard edges */
+.shadow-tech {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(102, 102, 255, 0.1);
+}
+
+.shadow-tech-lg {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(102, 102, 255, 0.2);
+}
+
+/* Frosted glass effect for panels */
+.glass-panel {
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(102, 102, 255, 0.1);
+}
+
+/* Button hover effects with fluorescent glow */
+.btn:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(var(--color-primary), 0.4);
+}
+
+/* Input focus effects */
+.input:focus, .select:focus, .textarea:focus {
+    box-shadow: 0 0 0 2px var(--color-primary), 0 0 12px rgba(var(--color-primary), 0.3);
+}
+</style>
+    <style>
+/* Background with abstract circuit/geometric pattern */
+.bg-circuit-pattern {
+    background-image:
+        linear-gradient(rgba(102, 102, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(102, 102, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(rgba(51, 255, 204, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(51, 255, 204, 0.03) 1px, transparent 1px);
+    background-size: 100px 100px, 100px 100px, 20px 20px, 20px 20px;
+    background-position: -2px -2px, -2px -2px, -1px -1px, -1px -1px;
+    animation: pan-background 60s linear infinite;
+}
+
+@keyframes pan-background {
+    0% { background-position: 0% 0%; }
+    100% { background-position: 100% 100%; }
+}
+
+/* Fine noise texture for the glass panel */
+.noise-texture::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url(&apos;data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIj48ZmlsdGVyIGlkPSJub2lzZSI+PGZlVHVyYnVsZW5jZSB0eXBlPSJmcmFjdGFsTm9pc2UiIGJhc2VGcmVxdWVuY3k9IjAuODUiIG51bU9jdGF2ZXM9IjMiIHN0aXRjaFRpbGVzPSJzdGl0Y2giLz48ZmVDb21wb25lbnRUcmFuc2Zlcj48ZmVGdW5jQSB0eXBlPSJkaXNjcmV0ZSIgdGFibGVWYWx1ZXM9IjAgMSIvPjwvZmVDb21wb25lbnRUcmFuc2Zlcj48L2ZpbHRlcj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWx0ZXI9InVybCgjbm9pc2UpIi8+PC9zdmc+&apos;);
+    opacity: 0.025;
+    pointer-events: none;
+    z-index: -1;
+}
+
+/* Custom glow for input focus to match theme */
+.input:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 1px var(--color-primary), 0 0 15px rgba(102, 102, 255, 0.4);
+    outline: none; /* Remove default outline */
+}
+
+/* Animation for feedback alerts */
+.alert-fade-in {
+    opacity: 0;
+    transform: translateY(-10px);
+    animation: fadeIn 0.3s ease-out forwards;
+}
+
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+</style>
+<script src="./assets/static/uxbot/25_6/holder.js"></script></head>
+<body class="font-body bg-base-100 text-base-content">
+    <div class="flex flex-col min-h-screen">
+        <div data-section-id="common_header_web" data-section-type="common_header" class="navbar bg-base-100 px-8 py-4 shadow-tech sticky top-0 z-50 glass-panel">
+    <!-- Logo Section -->
+    <div class="navbar-start">
+        <div class="dropdown lg:hidden">
+            <div tabindex="0" role="button" class="btn btn-ghost" onclick="toggleMobileMenu()">
+                <span class="iconify" data-icon="heroicons:bars-3" data-width="24"></span>
+            </div>
+            <ul tabindex="0" class="menu menu-sm dropdown-content mt-3 z-50 p-2 shadow-tech bg-base-200 rounded-box w-52 hidden" data-mobile-menu="">
+                <li><a onclick="navigateTo(&apos;market_overview_dashboard&apos;)">市场概览</a></li>
+                <li><a onclick="navigateTo(&apos;prediction_analysis_center&apos;)">预测分析</a></li>
+                <li><a onclick="navigateTo(&apos;agent_comparison_module&apos;)">智能体对比</a></li>
+                <li><a onclick="navigateTo(&apos;agent_evaluation_page&apos;)">模型评估</a></li>
+                <li><a onclick="navigateTo(&apos;personalization_settings_center&apos;)">个人设置</a></li>
+            </ul>
+        </div>
+        <a onclick="navigateTo(&apos;market_overview_dashboard&apos;)" class="text-2xl font-heading font-bold text-primary cursor-pointer flex items-center gap-2">
+            <span class="iconify" data-icon="heroicons:chart-bar" data-width="28"></span>
+            智能投研系统
+        </a>
+    </div>
+
+    <!-- Navigation Menu -->
+    <div class="navbar-center hidden lg:flex">
+        <ul class="menu menu-horizontal px-1 gap-6">
+            <li><a onclick="navigateTo(&apos;market_overview_dashboard&apos;)" class="nav-item text-base font-medium">市场概览</a></li>
+            <li><a onclick="navigateTo(&apos;prediction_analysis_center&apos;)" class="nav-item text-base font-medium">预测分析</a></li>
+            <li><a onclick="navigateTo(&apos;agent_comparison_module&apos;)" class="nav-item text-base font-medium">智能体对比</a></li>
+            <li><a onclick="navigateTo(&apos;agent_evaluation_page&apos;)" class="nav-item text-base font-medium">模型评估</a></li>
+            <li><a onclick="navigateTo(&apos;personalization_settings_center&apos;)" class="nav-item text-base font-medium">个人设置</a></li>
+        </ul>
+    </div>
+
+    <!-- Stock Search Bar -->
+    <div class="navbar-center hidden lg:flex lg:mx-8 flex-1 max-w-md">
+        <div class="join w-full">
+            <input type="text" placeholder="搜索股票代码或名称..." class="input input-bordered join-item flex-1 bg-base-200" data-stock-search-input="" onkeypress="if(event.key===&apos;Enter&apos;) handleStockSearch()">
+            <button class="btn btn-primary join-item" onclick="handleStockSearch()">
+                <span class="iconify" data-icon="heroicons:magnifying-glass" data-width="20"></span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Right Side Icons -->
+    <div class="navbar-end gap-3">
+        <!-- Theme Toggle -->
+        <button class="btn btn-ghost btn-circle" onclick="toggleTheme()" title="切换主题">
+            <span class="iconify" data-icon="heroicons:sun" data-width="24"></span>
+        </button>
+
+        <!-- System Notifications -->
+        <button class="btn btn-ghost btn-circle" onclick="navigateTo(&apos;alert_settings_page&apos;)" title="系统通知">
+            <div class="indicator">
+                <span class="iconify" data-icon="heroicons:bell" data-width="24"></span>
+                <span class="badge badge-xs badge-secondary indicator-item"></span>
+            </div>
+        </button>
+
+        <!-- Watchlist -->
+        <button class="btn btn-ghost btn-circle" onclick="navigateTo(&apos;watchlist_management&apos;)" title="自选股">
+            <div class="indicator">
+                <span class="iconify" data-icon="heroicons:star" data-width="24"></span>
+                <span class="badge badge-xs badge-accent indicator-item">5</span>
+            </div>
+        </button>
+
+        <!-- User Profile -->
+        <div class="dropdown dropdown-end">
+            <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">
+                <div class="avatar placeholder inline-flex items-center justify-center w-10 h-10 rounded-full bg-primary text-primary-content">
+                    <span class="flex items-center justify-center h-full font-semibold text-lg">U</span>
+                </div>
+            </div>
+            <ul tabindex="0" class="menu menu-sm dropdown-content mt-3 z-50 p-2 shadow-tech bg-base-200 rounded-box w-52">
+                <li><a onclick="navigateTo(&apos;user_profile_management&apos;)" class="justify-between">个人资料<span class="badge badge-sm badge-primary">Pro</span></a></li>
+                <li><a onclick="navigateTo(&apos;prediction_preference_settings&apos;)">预测偏好</a></li>
+                <li><a onclick="navigateTo(&apos;alert_settings_page&apos;)">预警设置</a></li>
+                <li><hr class="border-base-300"></li>
+                <li><a onclick="navigateTo(&apos;help_support_page&apos;)">帮助支持</a></li>
+                <li><a onclick="APP_GLOBALS.user.logout()">退出登录</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<style>
+[data-section-id="common_header_web"] .navbar {
+    border-bottom: var(--border) solid var(--color-base-300);
+    backdrop-filter: blur(10px);
+}
+
+[data-section-id="common_header_web"] .nav-item:hover {
+    color: var(--color-secondary);
+    text-shadow: 0 0 8px rgba(51, 255, 204, 0.5);
+}
+
+[data-section-id="common_header_web"] .input:focus {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+    box-shadow: 0 0 12px rgba(102, 102, 255, 0.3);
+}
+
+[data-section-id="common_header_web"] .dropdown:hover .dropdown-content {
+    display: block;
+}
+
+[data-section-id="common_header_web"] .btn-circle:hover {
+    background-color: rgba(102, 102, 255, 0.1);
+    color: var(--color-primary);
+    box-shadow: 0 0 12px rgba(102, 102, 255, 0.3);
+}
+
+[data-section-id="common_header_web"] .avatar:hover {
+    box-shadow: 0 0 12px rgba(102, 102, 255, 0.4);
+}
+</style>
+
+<script>
+(function() {
+    // Close mobile menu when clicking outside
+    document.addEventListener(&apos;click&apos;, function(e) {
+        const mobileMenu = document.querySelector(&apos;[data-mobile-menu]&apos;);
+        const menuButton = e.target.closest(&apos;.dropdown&apos;);
+        
+        if (mobileMenu && !menuButton && !mobileMenu.contains(e.target)) {
+            mobileMenu.classList.add(&apos;hidden&apos;);
+        }
+    });
+
+    // Enhanced stock search with suggestions
+    const searchInput = document.querySelector(&apos;[data-stock-search-input]&apos;);
+    if (searchInput) {
+        searchInput.addEventListener(&apos;input&apos;, function(e) {
+            const value = e.target.value.trim();
+            if (value.length >= 2) {
+                // Add search suggestions logic here if needed
+                // For now, just validate input format
+                if (/^[A-Za-z0-9]+$/.test(value)) {
+                    e.target.classList.remove(&apos;input-error&apos;);
+                    e.target.classList.add(&apos;input-success&apos;);
+                } else {
+                    e.target.classList.remove(&apos;input-success&apos;);
+                    e.target.classList.add(&apos;input-error&apos;);
+                }
+            } else {
+                e.target.classList.remove(&apos;input-success&apos;, &apos;input-error&apos;);
+            }
+        });
+    }
+
+    // Update user info in header if logged in
+    function updateUserDisplay() {
+        const userAvatar = document.querySelector(&apos;.avatar span&apos;);
+        if (userAvatar && window.APP_GLOBALS.user.isLoggedIn) {
+            userAvatar.textContent = window.APP_GLOBALS.user.username.charAt(0).toUpperCase();
+        }
+    }
+
+    // Initialize user display
+    updateUserDisplay();
+})();
+</script>
+
+        <main class="flex-grow flex items-center justify-center p-4 relative overflow-hidden">
+            <!-- Background Decoration -->
+            <div class="absolute inset-0 z-0 bg-circuit-pattern opacity-10"></div>
+            
+            <!-- Forgot Password Form Section -->
+            <section id="ForgotPasswordForm" class="relative z-10 w-full max-w-md">
+                <div class="card glass-panel shadow-tech-lg noise-texture">
+                    <div class="card-body p-8 md:p-12">
+                        <h1 class="card-title text-3xl font-bold text-center mb-6 text-base-content">忘记密码</h1>
+                        <p class="text-center text-base-content/70 mb-8">请输入您的注册邮箱地址，我们将向您发送密码重置链接。</p>
+                        
+                        <div id="feedback-message" class="mb-4 min-h-[48px]"></div>
+
+                        <form id="reset-form" onsubmit="handleFormSubmit(event)">
+                            <div class="form-control">
+                                <label class="label">
+                                    <span class="label-text text-base-content/80">注册邮箱</span>
+                                </label>
+                                <div class="relative">
+                                    <input id="email-input" type="email" placeholder="例如: user@example.com" class="input input-bordered w-full pr-10" required="">
+                                    <button type="button" id="clear-email-btn" class="btn btn-ghost btn-circle btn-sm absolute top-1/2 right-2 transform -translate-y-1/2 hidden" onclick="clearInput()">
+                                        <span class="iconify text-base-content/50" data-icon="heroicons:x-circle-solid" data-width="20"></span>
+                                    </button>
+                                </div>
+                            </div>
+    
+                            <div class="form-control mt-8">
+                                <button type="submit" class="btn btn-primary w-full">提交重置请求</button>
+                            </div>
+                        </form>
+    
+                        <div class="divider my-6 text-base-content/50">或者</div>
+    
+                        <div class="text-center">
+                            <a onclick="navigateTo(&apos;login_page&apos;)" class="link link-hover text-secondary font-semibold">返回登录</a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+        
+        <div data-section-id="common_footer_web" data-section-type="common_footer" class="bg-base-200">
+    <!-- Main Footer Content -->
+    <footer class="footer footer-horizontal p-12 text-base-content">
+        <!-- About Section -->
+        <aside>
+            <div class="flex items-center gap-2 mb-4">
+                <span class="iconify text-primary" data-icon="heroicons:chart-bar" data-width="32"></span>
+                <span class="text-2xl font-heading font-bold text-primary">智能投研系统</span>
+            </div>
+            <p class="text-sm leading-relaxed max-w-xs">基于多智能体强化学习的股票预测系统，专为时序数据分析与金融预测研究设计。帮助学生和研究者理解AI在金融领域的应用。</p>
+            <div class="flex gap-4 mt-4">
+                <a class="btn btn-ghost btn-sm btn-circle" title="GitHub项目">
+                    <span class="iconify" data-icon="mdi:github" data-width="20"></span>
+                </a>
+                <a class="btn btn-ghost btn-sm btn-circle" title="技术文档">
+                    <span class="iconify" data-icon="heroicons:document-text" data-width="20"></span>
+                </a>
+                <a class="btn btn-ghost btn-sm btn-circle" title="学术论文">
+                    <span class="iconify" data-icon="heroicons:academic-cap" data-width="20"></span>
+                </a>
+                <a class="btn btn-ghost btn-sm btn-circle" title="邮件联系">
+                    <span class="iconify" data-icon="heroicons:envelope" data-width="20"></span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Core Features -->
+        <nav>
+            <header class="footer-title text-primary font-heading">核心功能</header>
+            <a class="link link-hover" onclick="navigateTo(&apos;market_overview_dashboard&apos;)">市场概览仪表盘</a>
+            <a class="link link-hover" onclick="navigateTo(&apos;prediction_analysis_center&apos;)">预测结果分析</a>
+            <a class="link link-hover" onclick="navigateTo(&apos;agent_comparison_module&apos;)">智能体对比</a>
+            <a class="link link-hover" onclick="navigateTo(&apos;agent_evaluation_page&apos;)">模型性能评估</a>
+            <a class="link link-hover" onclick="navigateTo(&apos;watchlist_management&apos;)">自选股管理</a>
+        </nav>
+
+        <!-- Research Tools -->
+        <nav>
+            <header class="footer-title text-primary font-heading">研究工具</header>
+            <a class="link link-hover" onclick="navigateTo(&apos;prediction_preference_settings&apos;)">预测偏好配置</a>
+            <a class="link link-hover" onclick="navigateTo(&apos;alert_settings_page&apos;)">时序预警设置</a>
+            <a class="link link-hover">历史回溯测试</a>
+            <a class="link link-hover">参数调优界面</a>
+            <a class="link link-hover">模型迭代记录</a>
+        </nav>
+
+        <!-- Learning Resources -->
+        <nav>
+            <header class="footer-title text-primary font-heading">学习资源</header>
+            <a class="link link-hover" onclick="navigateTo(&apos;help_support_page&apos;)">系统使用指南</a>
+            <a class="link link-hover">算法原理解释</a>
+            <a class="link link-hover">时序分析教程</a>
+            <a class="link link-hover">强化学习基础</a>
+            <a class="link link-hover">金融数据科学</a>
+            <a class="link link-hover">常见问题解答</a>
+        </nav>
+
+        <!-- Account & Support -->
+        <nav>
+            <header class="footer-title text-primary font-heading">账户支持</header>
+            <a class="link link-hover" onclick="navigateTo(&apos;login_page&apos;)">用户登录</a>
+            <a class="link link-hover" onclick="navigateTo(&apos;registration_page&apos;)">注册账户</a>
+            <a class="link link-hover" onclick="navigateTo(&apos;user_profile_management&apos;)">个人资料</a>
+            <a class="link link-hover" onclick="navigateTo(&apos;help_support_page&apos;)">技术支持</a>
+            <a class="link link-hover">隐私政策</a>
+            <a class="link link-hover">使用条款</a>
+        </nav>
+    </footer>
+
+    <!-- Bottom Copyright Bar -->
+    <footer class="footer footer-center p-6 bg-base-300 text-base-content border-t border-base-content/10">
+        <aside>
+            <div class="flex flex-col sm:flex-row items-center justify-between w-full max-w-6xl gap-4">
+                <p class="text-sm">© 2025 多智能体强化学习股票预测系统. 版权所有.
+                    <span class="text-base-content/70">面向学生科研的专业化AI金融工具.</span>
+                </p>
+                <div class="flex items-center gap-6 text-sm">
+                    <a class="link link-hover">开源协议</a>
+                    <a class="link link-hover">学术引用</a>
+                    <div class="flex items-center gap-2">
+                        <span class="iconify" data-icon="heroicons:shield-check" data-width="16"></span>
+                        <span>学术研究用途</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="iconify" data-icon="heroicons:cpu-chip" data-width="16"></span>
+                        <span>AI驱动分析</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </footer>
+</div>
+
+<style>
+[data-section-id="common_footer_web"] .footer-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: var(--color-primary);
+}
+
+[data-section-id="common_footer_web"] .link-hover:hover {
+    color: var(--color-secondary);
+    text-shadow: 0 0 4px rgba(51, 255, 204, 0.3);
+    transition: all 0.15s ease-in-out;
+}
+
+[data-section-id="common_footer_web"] .btn-circle:hover {
+    background-color: rgba(102, 102, 255, 0.1);
+    color: var(--color-primary);
+    box-shadow: 0 0 12px rgba(102, 102, 255, 0.3);
+    transform: translateY(-2px);
+}
+
+[data-section-id="common_footer_web"] aside p {
+    color: var(--color-base-content);
+    opacity: 0.8;
+}
+
+[data-section-id="common_footer_web"] .bg-base-300 {
+    background: linear-gradient(135deg, var(--color-base-300) 0%, rgba(26, 26, 26, 0.8) 100%);
+}
+</style>
+
+<script>
+(function() {
+    // Add footer-specific JavaScript functionality
+    
+    // Analytics tracking for footer links (placeholder)
+    const footerLinks = document.querySelectorAll(&apos;[data-section-id="common_footer_web"] .link-hover&apos;);
+    footerLinks.forEach(link => {
+        link.addEventListener(&apos;click&apos;, function(e) {
+            const linkText = e.target.textContent.trim();
+            // Analytics tracking placeholder
+            console.log(`Footer link clicked: ${linkText}`);
+        });
+    });
+
+    // Social media links handling
+    const socialButtons = document.querySelectorAll(&apos;[data-section-id="common_footer_web"] .btn-circle&apos;);
+    socialButtons.forEach(button => {
+        button.addEventListener(&apos;click&apos;, function(e) {
+            e.preventDefault();
+            const icon = e.currentTarget.querySelector(&apos;.iconify&apos;);
+            const iconName = icon?.getAttribute(&apos;data-icon&apos;);
+            
+            // Handle different social/external links
+            switch(iconName) {
+                case &apos;mdi:github&apos;:
+                    window.open(&apos;https://github.com&apos;, &apos;_blank&apos;);
+                    break;
+                case &apos;heroicons:document-text&apos;:
+                    showSystemNotification(&apos;技术文档正在准备中...&apos;, &apos;info&apos;);
+                    break;
+                case &apos;heroicons:academic-cap&apos;:
+                    showSystemNotification(&apos;学术论文即将发布...&apos;, &apos;info&apos;);
+                    break;
+                case &apos;heroicons:envelope&apos;:
+                    window.location.href = &apos;mailto:support@stock-prediction-system.com&apos;;
+                    break;
+                default:
+                    console.log(&apos;Footer button clicked:&apos;, iconName);
+            }
+        });
+    });
+
+    // Copyright year auto-update (if needed)
+    const currentYear = new Date().getFullYear();
+    const copyrightElement = document.querySelector(&apos;[data-section-id="common_footer_web"] .footer-center p&apos;);
+    if (copyrightElement && currentYear > 2025) {
+        copyrightElement.innerHTML = copyrightElement.innerHTML.replace(&apos;2025&apos;, currentYear);
+    }
+})();
+</script>
+    </div>
+
+    <script>
+(function() {
+    // Initialize global namespace for app
+    window.APP_GLOBALS = window.APP_GLOBALS || {};
+
+    // Navigation function for page transitions
+    window.navigateTo = function(targetPageId) {
+        const isInIframe = window.self !== window.top;
+        const targetFileName = `${targetPageId}.html`;
+        
+        if (isInIframe) {
+            window.parent.postMessage({
+                type: &apos;iframeNavigation&apos;,
+                targetPageId: targetPageId
+            }, &apos;*&apos;);
+        } else {
+            window.location.href = targetFileName;
+        }
+    };
+
+    // Stock search functionality
+    window.handleStockSearch = function() {
+        const searchInput = document.querySelector(&apos;[data-stock-search-input]&apos;);
+        if (searchInput && searchInput.value.trim()) {
+            // Store search term for results page
+            sessionStorage.setItem(&apos;stockSearchTerm&apos;, searchInput.value.trim());
+            navigateTo(&apos;market_overview_dashboard&apos;);
+        }
+    };
+
+    // Mobile menu toggle
+    window.toggleMobileMenu = function() {
+        const mobileMenu = document.querySelector(&apos;[data-mobile-menu]&apos;);
+        if (mobileMenu) {
+            mobileMenu.classList.toggle(&apos;hidden&apos;);
+        }
+    };
+
+    // Notification system for system alerts
+    window.showSystemNotification = function(message, type = &apos;info&apos;) {
+        const toast = document.createElement(&apos;div&apos;);
+        toast.className = &apos;toast toast-end toast-top z-50&apos;;
+        
+        const alertClass = type === &apos;success&apos; ? &apos;alert-success&apos; : 
+                          type === &apos;error&apos; ? &apos;alert-error&apos; : 
+                          type === &apos;warning&apos; ? &apos;alert-warning&apos; : &apos;alert-info&apos;;
+        
+        const iconName = type === &apos;success&apos; ? &apos;heroicons:check-circle&apos; : 
+                        type === &apos;error&apos; ? &apos;heroicons:x-circle&apos; : 
+                        type === &apos;warning&apos; ? &apos;heroicons:exclamation-triangle&apos; : 
+                        &apos;heroicons:information-circle&apos;;
+        
+        toast.innerHTML = `
+            <div class="alert ${alertClass}">
+                <span class="iconify" data-icon="${iconName}" data-width="20"></span>
+                <span>${message}</span>
+            </div>
+        `;
+        
+        document.body.appendChild(toast);
+        
+        setTimeout(() => {
+            toast.remove();
+        }, 5000);
+    };
+
+    // Theme toggle functionality for dark/light modes
+    window.toggleTheme = function() {
+        const html = document.documentElement;
+        const currentTheme = html.getAttribute(&apos;data-theme&apos;);
+        const newTheme = currentTheme === &apos;black&apos; ? &apos;dark&apos; : &apos;black&apos;;
+        html.setAttribute(&apos;data-theme&apos;, newTheme);
+        localStorage.setItem(&apos;theme&apos;, newTheme);
+    };
+
+    // Initialize theme on load
+    window.initializeTheme = function() {
+        const savedTheme = localStorage.getItem(&apos;theme&apos;) || &apos;black&apos;;
+        document.documentElement.setAttribute(&apos;data-theme&apos;, savedTheme);
+    };
+
+    // User session management
+    window.APP_GLOBALS.user = {
+        isLoggedIn: localStorage.getItem(&apos;userLoggedIn&apos;) === &apos;true&apos;,
+        username: localStorage.getItem(&apos;username&apos;) || &apos;用户&apos;,
+        email: localStorage.getItem(&apos;userEmail&apos;) || &apos;&apos;,
+        
+        login: function(username, email) {
+            this.isLoggedIn = true;
+            this.username = username;
+            this.email = email;
+            localStorage.setItem(&apos;userLoggedIn&apos;, &apos;true&apos;);
+            localStorage.setItem(&apos;username&apos;, username);
+            localStorage.setItem(&apos;userEmail&apos;, email);
+        },
+        
+        logout: function() {
+            this.isLoggedIn = false;
+            this.username = &apos;用户&apos;;
+            this.email = &apos;&apos;;
+            localStorage.removeItem(&apos;userLoggedIn&apos;);
+            localStorage.removeItem(&apos;username&apos;);
+            localStorage.removeItem(&apos;userEmail&apos;);
+            navigateTo(&apos;login_page&apos;);
+        }
+    };
+
+    // Initialize theme when script loads
+    initializeTheme();
+})();
+</script>
+    <script>
+document.addEventListener(&apos;DOMContentLoaded&apos;, function() {
+    const emailInput = document.getElementById(&apos;email-input&apos;);
+    const clearEmailBtn = document.getElementById(&apos;clear-email-btn&apos;);
+
+    if (emailInput && clearEmailBtn) {
+        emailInput.addEventListener(&apos;input&apos;, () => {
+            if (emailInput.value.length > 0) {
+                clearEmailBtn.classList.remove(&apos;hidden&apos;);
+            } else {
+                clearEmailBtn.classList.add(&apos;hidden&apos;);
+            }
+        });
+    }
+});
+
+function clearInput() {
+    const emailInput = document.getElementById(&apos;email-input&apos;);
+    const clearEmailBtn = document.getElementById(&apos;clear-email-btn&apos;);
+    if (emailInput && clearEmailBtn) {
+        emailInput.value = &apos;&apos;;
+        emailInput.focus();
+        clearEmailBtn.classList.add(&apos;hidden&apos;);
+    }
+}
+
+function handleFormSubmit(event) {
+    event.preventDefault();
+    const emailInput = document.getElementById(&apos;email-input&apos;);
+    const email = emailInput.value;
+    
+    // Basic email validation regex
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!email) {
+        showFeedbackMessage(&apos;邮箱地址不能为空。&apos;, &apos;error&apos;);
+        return;
+    }
+
+    if (!emailRegex.test(email)) {
+        showFeedbackMessage(&apos;请输入有效的邮箱地址。&apos;, &apos;error&apos;);
+        return;
+    }
+
+    // Simulate API call and success response
+    showFeedbackMessage(&apos;密码重置链接已发送至您的邮箱，请注意查收。&apos;, &apos;success&apos;);
+    
+    // Disable form to prevent multiple submissions
+    emailInput.disabled = true;
+    document.querySelector(&apos;#reset-form button[type="submit"]&apos;).disabled = true;
+    
+    // Redirect back to login page after a short delay
+    setTimeout(() => {
+        navigateTo(&apos;login_page&apos;);
+    }, 3000);
+}
+
+function showFeedbackMessage(message, type = &apos;info&apos;) {
+    const feedbackContainer = document.getElementById(&apos;feedback-message&apos;);
+    if (!feedbackContainer) return;
+
+    // Clear previous messages
+    feedbackContainer.innerHTML = &apos;&apos;;
+
+    const alertTypeClass = {
+        success: &apos;alert-success&apos;,
+        error: &apos;alert-error&apos;,
+        info: &apos;alert-info&apos;
+    }[type];
+
+    const iconName = {
+        success: &apos;heroicons:check-circle-solid&apos;,
+        error: &apos;heroicons:exclamation-triangle-solid&apos;,
+        info: &apos;heroicons:information-circle-solid&apos;
+    }[type];
+
+    const alertDiv = document.createElement(&apos;div&apos;);
+    alertDiv.className = `alert ${alertTypeClass} shadow-lg text-sm alert-fade-in`;
+    alertDiv.innerHTML = `
+        <div class="flex items-center gap-2">
+            <span class="iconify" data-icon="${iconName}" data-width="20"></span>
+            <span>${message}</span>
+        </div>
+    `;
+
+    feedbackContainer.appendChild(alertDiv);
+
+    // Automatically remove error/info messages after some time
+    if (type !== &apos;success&apos;) {
+       setTimeout(() => {
+            if (feedbackContainer.contains(alertDiv)) {
+                feedbackContainer.innerHTML = &apos;&apos;;
+            }
+        }, 5000);
+    }
+}
+</script>
+
+<script>
+    setTimeout(() => {
+      Holder.run({
+        domain: "placehold.co"
+      })
+    }, 100)
+  </script></body></html>'></iframe>
+                    </div>
+                  </div>
+
+                </body>
+                </html>
+            

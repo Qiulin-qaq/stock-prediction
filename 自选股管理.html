@@ -1,0 +1,1084 @@
+
+                <!DOCTYPE html>
+                <html lang="zh">
+                <head>
+                  <meta charset="UTF-8">
+                  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                  <title>自选股管理</title>
+                  <style>
+                    *,
+                    *::before,
+                    *::after {
+                      box-sizing: border-box;
+                      margin: 0;
+                    }
+                    .iframe-outer {
+                      position: fixed;
+                      top: 0;
+                      left: 0;
+                      bottom: 0;
+                      right: 0;
+                      display: flex;
+                      justify-content: center;
+                      background-color: #E0E0E0;
+                    }
+                    .iframe-wrapper {
+                      width: 100%;
+                      height: 100%;
+                      margin: 0 auto;
+                      transform-origin: center top;
+                      flex-shrink: 0;
+                    }
+                    #dynamicIframe {
+                      border: none;
+                      width: 100%;
+                      height: 100%;
+                    }
+                  </style>
+                  <script>
+                const width = 1920
+                const height = 1080
+                const resolutionRatio = width && height ? width / height : 1
+                const pageNameMap = {
+                  'login_page': '登录页',
+    'registration_page': '注册页',
+    'forgot_password_page': '忘记密码',
+    'market_overview_dashboard': '市场概览仪表盘',
+    'prediction_analysis_center': '预测结果分析中心',
+    'agent_comparison_module': '智能体模型对比',
+    'agent_evaluation_page': '智能体表现评估',
+    'personalization_settings_center': '个性化设置中心',
+    'watchlist_management': '自选股管理',
+    'prediction_preference_settings': '预测偏好设置',
+    'alert_settings_page': '时序预警设置',
+    'user_profile_management': '用户资料管理',
+    'help_support_page': '帮助与支持'
+                }
+                function setIframeSize(w, h) {
+                  const currentContainerRadio = w / h
+                  let widthValue = w
+                  let heightValue = h
+                  let zoom = 1
+                  if (currentContainerRadio > resolutionRatio) {
+                    widthValue = h * resolutionRatio
+                    heightValue = h
+                  } else {
+                    widthValue = w
+                    heightValue = w / resolutionRatio
+                  }
+                  zoom = width ? widthValue / width : 1
+                  return {
+                    width: widthValue / zoom + 'px',
+                    height: heightValue / zoom + 'px',
+                    zoom,
+                  }
+                }
+                function adjustIframeSize() {
+                  const iframeWrapper = document.querySelector(".iframe-wrapper")
+                  const { width, height, zoom } = setIframeSize(window.innerWidth, window.innerHeight)
+                  iframeWrapper.style.height = height
+                  iframeWrapper.style.width = width
+                  iframeWrapper.style.transform = 'scale(' + zoom + ')'
+                }
+                function sanitizeFilename(name) {
+                  return name.replace(/[\/:*?"<>|]/g, '_')
+                }
+                function handlePostMessage(event) {
+                  if (!event.data) {
+                    return
+                  }
+                  const { type, targetPageId } = event.data
+                  const targetPageName = pageNameMap[targetPageId]
+                  if (type === "iframeNavigation" && targetPageId && targetPageName) {
+                    window.location.href = targetPageName + '.html'
+                  }
+                }
+                window.addEventListener('message', handlePostMessage)
+                window.onload = adjustIframeSize
+                window.onresize = adjustIframeSize
+                window.onunload = () => {
+                  window.removeEventListener('message', handlePostMessage)
+                }
+              </script>
+                </head>
+                <body>
+                  <div class="iframe-outer">
+                    <div class="iframe-wrapper">
+                      <iframe id="dynamicIframe" srcdoc='<html lang="简体中文" data-theme="black"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>自选股管理 - 智能投研系统</title>
+    <link href="./assets/static/uxbot/daisyui@5.css" rel="stylesheet" type="text/css">
+    <script src="./assets/static/uxbot/tailwind-browser@4.js"></script>
+    <link href="./assets/static/uxbot/daisyui-themes.css" rel="stylesheet" type="text/css">
+    <script src="./assets/3/3.1.1/iconify.min.js"></script>
+    <style>
+/* Import Google Fonts */
+@import url(&apos;https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap&apos;);
+
+/* DaisyUI Theme Variables Customization - Tech Cold Beauty Theme */
+:root {
+    /* Base Colors - Deep Dark Theme */
+    --color-base-100: rgba(0, 0, 0, 1);           /* Pure Black - main backgrounds */
+    --color-base-200: rgba(13, 13, 13, 1);       /* Dark Grey - secondary backgrounds, cards */
+    --color-base-300: rgba(26, 26, 26, 1);       /* Slightly Lighter Dark Grey - borders, separators */
+    --color-base-content: rgba(240, 240, 240, 1); /* Off-white/Light Grey - primary text */
+    
+    /* Fluorescent Accent Colors */
+    --color-primary: rgba(102, 102, 255, 1);      /* Fluorescent Blue-Purple */
+    --color-primary-content: rgba(0, 0, 0, 1);
+    --color-secondary: rgba(51, 255, 204, 1);     /* Fluorescent Cyan-Green */
+    --color-secondary-content: rgba(0, 0, 0, 1);
+    --color-accent: rgba(255, 136, 51, 1);        /* Fluorescent Red-Orange */
+    --color-accent-content: rgba(0, 0, 0, 1);
+    
+    /* Neutral Colors */
+    --color-neutral: rgba(42, 46, 55, 1);
+    --color-neutral-content: rgba(240, 240, 240, 1);
+    
+    /* Semantic Colors - Vibrant for Tech Aesthetic */
+    --color-success: rgba(0, 255, 127, 1);        /* Vibrant neon green */
+    --color-success-content: rgba(0, 0, 0, 1);
+    --color-warning: rgba(255, 191, 0, 1);        /* Bright orange/yellow */
+    --color-warning-content: rgba(0, 0, 0, 1);
+    --color-error: rgba(255, 51, 102, 1);         /* Bold neon red */
+    --color-error-content: rgba(0, 0, 0, 1);
+    --color-info: rgba(0, 191, 255, 1);           /* Clean bright blue */
+    --color-info-content: rgba(0, 0, 0, 1);
+    
+    /* Border radius and effects - Minimal tech aesthetic */
+    --radius-box: 0.25rem;    /* 4px for crisp, tech feel */
+    --radius-field: 0.25rem;
+    --radius-selector: 0.25rem;
+    --border: 1px;
+}
+
+/* Typography */
+.font-heading {
+    font-family: &apos;Inter&apos;, sans-serif;
+    font-weight: 600;
+}
+
+.font-body {
+    font-family: &apos;Inter&apos;, sans-serif;
+}
+
+.font-mono {
+    font-family: &apos;JetBrains Mono&apos;, monospace;
+}
+
+/* Apply fonts globally */
+h1, h2, h3, h4, h5, h6 {
+    font-family: &apos;Inter&apos;, sans-serif;
+    font-weight: 600;
+}
+
+body, p, span, div, button, input, textarea, select {
+    font-family: &apos;Inter&apos;, sans-serif;
+}
+
+/* Tech-cold beauty effects */
+.glow-primary {
+    box-shadow: 0 0 20px rgba(102, 102, 255, 0.3);
+}
+
+.glow-secondary {
+    box-shadow: 0 0 20px rgba(51, 255, 204, 0.3);
+}
+
+.glow-accent {
+    box-shadow: 0 0 20px rgba(255, 136, 51, 0.3);
+}
+
+/* Smooth transitions for interactive elements */
+.nav-item {
+    transition: all 0.15s ease-in-out;
+}
+
+.nav-item:hover {
+    color: var(--color-secondary);
+    text-shadow: 0 0 8px var(--color-secondary);
+}
+
+/* Custom shadows for tech aesthetic - hard edges */
+.shadow-tech {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(102, 102, 255, 0.1);
+}
+
+.shadow-tech-lg {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(102, 102, 255, 0.2);
+}
+
+/* Frosted glass effect for panels */
+.glass-panel {
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(102, 102, 255, 0.1);
+}
+
+/* Button hover effects with fluorescent glow */
+.btn:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(var(--color-primary), 0.4);
+}
+
+/* Input focus effects */
+.input:focus, .select:focus, .textarea:focus {
+    box-shadow: 0 0 0 2px var(--color-primary), 0 0 12px rgba(var(--color-primary), 0.3);
+}
+</style>
+    <style>
+/* Custom styles for Watchlist Management page */
+.glass-panel .modal-box, 
+.glass-panel.card {
+    background: rgba(13, 13, 13, 0.6);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(102, 102, 255, 0.15);
+}
+
+.modal-backdrop {
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+}
+
+/* Customizing range slider to fit the tech-theme */
+.range {
+    --range-shdw: var(--color-secondary);
+}
+
+.range:hover::-webkit-slider-thumb {
+    box-shadow: 0 0 10px 2px var(--color-secondary);
+}
+.range:hover::-moz-range-thumb {
+    box-shadow: 0 0 10px 2px var(--color-secondary);
+}
+
+/* Enhance table row hover effect */
+#watchlist-table tbody tr:hover {
+    background-color: rgba(102, 102, 255, 0.1);
+    box-shadow: 0 0 15px rgba(102, 102, 255, 0.2);
+}
+
+/* Style for action buttons glow on hover */
+.btn-ghost:hover .iconify {
+    filter: drop-shadow(0 0 4px currentColor);
+    transition: filter 0.2s ease-in-out;
+}
+</style>
+<script src="./assets/static/uxbot/25_6/holder.js"></script></head>
+<body class="bg-base-100 font-body holderjs" data-background-src="?placehold.co/1920x1080.png?text=Abstract+Geometric+Pattern">
+
+    <div data-section-id="common_header_web" data-section-type="common_header" class="navbar bg-base-100 px-8 py-4 shadow-tech sticky top-0 z-50 glass-panel">
+    <!-- Logo Section -->
+    <div class="navbar-start">
+        <div class="dropdown lg:hidden">
+            <div tabindex="0" role="button" class="btn btn-ghost" onclick="toggleMobileMenu()">
+                <span class="iconify" data-icon="heroicons:bars-3" data-width="24"></span>
+            </div>
+            <ul tabindex="0" class="menu menu-sm dropdown-content mt-3 z-50 p-2 shadow-tech bg-base-200 rounded-box w-52 hidden" data-mobile-menu="">
+                <li><a onclick="navigateTo(&apos;market_overview_dashboard&apos;)">市场概览</a></li>
+                <li><a onclick="navigateTo(&apos;prediction_analysis_center&apos;)">预测分析</a></li>
+                <li><a onclick="navigateTo(&apos;agent_comparison_module&apos;)">智能体对比</a></li>
+                <li><a onclick="navigateTo(&apos;agent_evaluation_page&apos;)">模型评估</a></li>
+                <li><a onclick="navigateTo(&apos;personalization_settings_center&apos;)">个人设置</a></li>
+            </ul>
+        </div>
+        <a onclick="navigateTo(&apos;market_overview_dashboard&apos;)" class="text-2xl font-heading font-bold text-primary cursor-pointer flex items-center gap-2">
+            <span class="iconify" data-icon="heroicons:chart-bar" data-width="28"></span>
+            智能投研系统
+        </a>
+    </div>
+
+    <!-- Navigation Menu -->
+    <div class="navbar-center hidden lg:flex">
+        <ul class="menu menu-horizontal px-1 gap-6">
+            <li><a onclick="navigateTo(&apos;market_overview_dashboard&apos;)" class="nav-item text-base font-medium">市场概览</a></li>
+            <li><a onclick="navigateTo(&apos;prediction_analysis_center&apos;)" class="nav-item text-base font-medium">预测分析</a></li>
+            <li><a onclick="navigateTo(&apos;agent_comparison_module&apos;)" class="nav-item text-base font-medium">智能体对比</a></li>
+            <li><a onclick="navigateTo(&apos;agent_evaluation_page&apos;)" class="nav-item text-base font-medium">模型评估</a></li>
+            <li><a onclick="navigateTo(&apos;personalization_settings_center&apos;)" class="nav-item text-base font-medium">个人设置</a></li>
+        </ul>
+    </div>
+
+    <!-- Stock Search Bar -->
+    <div class="navbar-center hidden lg:flex lg:mx-8 flex-1 max-w-md">
+        <div class="join w-full">
+            <input type="text" placeholder="搜索股票代码或名称..." class="input input-bordered join-item flex-1 bg-base-200" data-stock-search-input="" onkeypress="if(event.key===&apos;Enter&apos;) handleStockSearch()">
+            <button class="btn btn-primary join-item" onclick="handleStockSearch()">
+                <span class="iconify" data-icon="heroicons:magnifying-glass" data-width="20"></span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Right Side Icons -->
+    <div class="navbar-end gap-3">
+        <!-- Theme Toggle -->
+        <button class="btn btn-ghost btn-circle" onclick="toggleTheme()" title="切换主题">
+            <span class="iconify" data-icon="heroicons:sun" data-width="24"></span>
+        </button>
+
+        <!-- System Notifications -->
+        <button class="btn btn-ghost btn-circle" onclick="navigateTo(&apos;alert_settings_page&apos;)" title="系统通知">
+            <div class="indicator">
+                <span class="iconify" data-icon="heroicons:bell" data-width="24"></span>
+                <span class="badge badge-xs badge-secondary indicator-item"></span>
+            </div>
+        </button>
+
+        <!-- Watchlist -->
+        <button class="btn btn-ghost btn-circle" onclick="navigateTo(&apos;watchlist_management&apos;)" title="自选股">
+            <div class="indicator">
+                <span class="iconify" data-icon="heroicons:star" data-width="24"></span>
+                <span class="badge badge-xs badge-accent indicator-item">5</span>
+            </div>
+        </button>
+
+        <!-- User Profile -->
+        <div class="dropdown dropdown-end">
+            <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">
+                <div class="avatar placeholder inline-flex items-center justify-center w-10 h-10 rounded-full bg-primary text-primary-content">
+                    <span class="flex items-center justify-center h-full font-semibold text-lg">U</span>
+                </div>
+            </div>
+            <ul tabindex="0" class="menu menu-sm dropdown-content mt-3 z-50 p-2 shadow-tech bg-base-200 rounded-box w-52">
+                <li><a onclick="navigateTo(&apos;user_profile_management&apos;)" class="justify-between">个人资料<span class="badge badge-sm badge-primary">Pro</span></a></li>
+                <li><a onclick="navigateTo(&apos;prediction_preference_settings&apos;)">预测偏好</a></li>
+                <li><a onclick="navigateTo(&apos;alert_settings_page&apos;)">预警设置</a></li>
+                <li><hr class="border-base-300"></li>
+                <li><a onclick="navigateTo(&apos;help_support_page&apos;)">帮助支持</a></li>
+                <li><a onclick="APP_GLOBALS.user.logout()">退出登录</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<style>
+[data-section-id="common_header_web"] .navbar {
+    border-bottom: var(--border) solid var(--color-base-300);
+    backdrop-filter: blur(10px);
+}
+
+[data-section-id="common_header_web"] .nav-item:hover {
+    color: var(--color-secondary);
+    text-shadow: 0 0 8px rgba(51, 255, 204, 0.5);
+}
+
+[data-section-id="common_header_web"] .input:focus {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+    box-shadow: 0 0 12px rgba(102, 102, 255, 0.3);
+}
+
+[data-section-id="common_header_web"] .dropdown:hover .dropdown-content {
+    display: block;
+}
+
+[data-section-id="common_header_web"] .btn-circle:hover {
+    background-color: rgba(102, 102, 255, 0.1);
+    color: var(--color-primary);
+    box-shadow: 0 0 12px rgba(102, 102, 255, 0.3);
+}
+
+[data-section-id="common_header_web"] .avatar:hover {
+    box-shadow: 0 0 12px rgba(102, 102, 255, 0.4);
+}
+</style>
+
+<script>
+(function() {
+    // Close mobile menu when clicking outside
+    document.addEventListener(&apos;click&apos;, function(e) {
+        const mobileMenu = document.querySelector(&apos;[data-mobile-menu]&apos;);
+        const menuButton = e.target.closest(&apos;.dropdown&apos;);
+        
+        if (mobileMenu && !menuButton && !mobileMenu.contains(e.target)) {
+            mobileMenu.classList.add(&apos;hidden&apos;);
+        }
+    });
+
+    // Enhanced stock search with suggestions
+    const searchInput = document.querySelector(&apos;[data-stock-search-input]&apos;);
+    if (searchInput) {
+        searchInput.addEventListener(&apos;input&apos;, function(e) {
+            const value = e.target.value.trim();
+            if (value.length >= 2) {
+                // Add search suggestions logic here if needed
+                // For now, just validate input format
+                if (/^[A-Za-z0-9]+$/.test(value)) {
+                    e.target.classList.remove(&apos;input-error&apos;);
+                    e.target.classList.add(&apos;input-success&apos;);
+                } else {
+                    e.target.classList.remove(&apos;input-success&apos;);
+                    e.target.classList.add(&apos;input-error&apos;);
+                }
+            } else {
+                e.target.classList.remove(&apos;input-success&apos;, &apos;input-error&apos;);
+            }
+        });
+    }
+
+    // Update user info in header if logged in
+    function updateUserDisplay() {
+        const userAvatar = document.querySelector(&apos;.avatar span&apos;);
+        if (userAvatar && window.APP_GLOBALS.user.isLoggedIn) {
+            userAvatar.textContent = window.APP_GLOBALS.user.username.charAt(0).toUpperCase();
+        }
+    }
+
+    // Initialize user display
+    updateUserDisplay();
+})();
+</script>
+
+    <main class="container mx-auto px-8 py-12">
+        
+        <!-- Page Header -->
+        <section id="PageHeader" class="mb-8">
+            <div class="flex justify-between items-center glass-panel shadow-tech p-4 rounded-lg">
+                <h1 class="text-3xl font-heading text-base-content font-bold">自选股管理</h1>
+                <button class="btn btn-outline btn-primary" onclick="navigateTo(&apos;personalization_settings_center&apos;)">
+                    <span class="iconify" data-icon="heroicons:arrow-left" data-width="20"></span>
+                    返回设置中心
+                </button>
+            </div>
+        </section>
+
+        <!-- Stock Watchlist -->
+        <section id="StockWatchlist">
+            <div class="card glass-panel shadow-tech-lg p-6 lg:p-8">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+                    <div class="join">
+                        <div class="relative">
+                            <input class="input input-bordered join-item w-full md:w-72" placeholder="按股票代码或名称快速查找..." oninput="filterWatchlist(this.value)">
+                            <span class="iconify absolute right-4 top-1/2 -translate-y-1/2 text-base-content/50" data-icon="heroicons:magnifying-glass" data-width="20"></span>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <button class="btn btn-secondary" onclick="document.getElementById(&apos;import_modal&apos;).showModal()">
+                            <span class="iconify" data-icon="heroicons:arrow-up-tray" data-width="20"></span>
+                            导入/导出
+                        </button>
+                        <button class="btn btn-primary glow-primary" onclick="document.getElementById(&apos;add_stock_modal&apos;).showModal()">
+                            <span class="iconify" data-icon="heroicons:plus-circle" data-width="20"></span>
+                            添加股票
+                        </button>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="table w-full" id="watchlist-table">
+                        <thead>
+                            <tr>
+                                <th>
+                                    <label>
+                                        <input type="checkbox" class="checkbox checkbox-primary" onchange="toggleAllCheckboxes(this)">
+                                    </label>
+                                </th>
+                                <th class="text-base-content/80">股票代码 / 名称</th>
+                                <th class="text-base-content/80">趋势微图</th>
+                                <th class="text-base-content/80">最新价格</th>
+                                <th class="text-base-content/80">涨跌幅</th>
+                                <th class="text-base-content/80 w-64">监控粒度</th>
+                                <th class="text-base-content/80 text-center">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Stock Item 1 -->
+                            <tr class="hover:bg-base-200/50 transition-colors duration-200" data-repeatable="true" data-stock-code="AAPL" data-stock-name="苹果">
+                                <th><label><input type="checkbox" class="checkbox checkbox-primary"></label></th>
+                                <td>
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-10 h-10 rounded-full bg-neutral flex items-center justify-center font-bold text-lg">A</div>
+                                        <div>
+                                            <div class="font-bold font-mono">AAPL</div>
+                                            <div class="text-sm text-base-content/70">苹果公司</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td><img alt="AAPL trend chart" class="h-10 w-24" data-src="placehold.co/120x40.png?text=Positive+Trend"></td>
+                                <td class="font-mono text-lg">195.89</td>
+                                <td class="text-success font-mono font-bold">+1.25 (+0.64%)</td>
+                                <td>
+                                    <div class="flex items-center gap-3">
+                                        <input type="range" min="0" max="100" value="75" class="range range-xs range-secondary" oninput="updateGranularityLabel(this)">
+                                        <span class="font-mono text-secondary font-semibold w-20 text-center granularity-label">日线</span>
+                                    </div>
+                                </td>
+                                <td class="text-center">
+                                    <button class="btn btn-ghost btn-sm" onclick="openEditModal(&apos;AAPL&apos;, &apos;苹果公司&apos;, 75)"><span class="iconify text-info" data-icon="heroicons:pencil-square" data-width="20"></span></button>
+                                    <button class="btn btn-ghost btn-sm" onclick="confirmDelete(&apos;AAPL&apos;)"><span class="iconify text-error" data-icon="heroicons:trash" data-width="20"></span></button>
+                                </td>
+                            </tr>
+                            <!-- Stock Item 2 -->
+                            <tr class="hover:bg-base-200/50 transition-colors duration-200" data-repeatable="true" data-stock-code="TSLA" data-stock-name="特斯拉">
+                                <th><label><input type="checkbox" class="checkbox checkbox-primary"></label></th>
+                                <td>
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-10 h-10 rounded-full bg-neutral flex items-center justify-center font-bold text-lg">T</div>
+                                        <div>
+                                            <div class="font-bold font-mono">TSLA</div>
+                                            <div class="text-sm text-base-content/70">特斯拉</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td><img alt="TSLA trend chart" class="h-10 w-24" data-src="placehold.co/120x40.png?text=Negative+Trend"></td>
+                                <td class="font-mono text-lg">245.01</td>
+                                <td class="text-error font-mono font-bold">-5.50 (-2.20%)</td>
+                                <td>
+                                    <div class="flex items-center gap-3">
+                                        <input type="range" min="0" max="100" value="50" class="range range-xs range-secondary" oninput="updateGranularityLabel(this)">
+                                        <span class="font-mono text-secondary font-semibold w-20 text-center granularity-label">60分钟</span>
+                                    </div>
+                                </td>
+                                 <td class="text-center">
+                                    <button class="btn btn-ghost btn-sm" onclick="openEditModal(&apos;TSLA&apos;, &apos;特斯拉&apos;, 50)"><span class="iconify text-info" data-icon="heroicons:pencil-square" data-width="20"></span></button>
+                                    <button class="btn btn-ghost btn-sm" onclick="confirmDelete(&apos;TSLA&apos;)"><span class="iconify text-error" data-icon="heroicons:trash" data-width="20"></span></button>
+                                </td>
+                            </tr>
+                            <!-- Stock Item 3 -->
+                            <tr class="hover:bg-base-200/50 transition-colors duration-200" data-repeatable="true" data-stock-code="NVDA" data-stock-name="英伟达">
+                                <th><label><input type="checkbox" class="checkbox checkbox-primary"></label></th>
+                                <td>
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-10 h-10 rounded-full bg-neutral flex items-center justify-center font-bold text-lg">N</div>
+                                        <div>
+                                            <div class="font-bold font-mono">NVDA</div>
+                                            <div class="text-sm text-base-content/70">英伟达</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td><img alt="NVDA trend chart" class="h-10 w-24" data-src="placehold.co/120x40.png?text=Neutral+Trend"></td>
+                                <td class="font-mono text-lg">490.55</td>
+                                <td class="text-base-content font-mono font-bold">+0.10 (+0.02%)</td>
+                                <td>
+                                    <div class="flex items-center gap-3">
+                                        <input type="range" min="0" max="100" value="25" class="range range-xs range-secondary" oninput="updateGranularityLabel(this)">
+                                        <span class="font-mono text-secondary font-semibold w-20 text-center granularity-label">15分钟</span>
+                                    </div>
+                                </td>
+                                <td class="text-center">
+                                    <button class="btn btn-ghost btn-sm" onclick="openEditModal(&apos;NVDA&apos;, &apos;英伟达&apos;, 25)"><span class="iconify text-info" data-icon="heroicons:pencil-square" data-width="20"></span></button>
+                                    <button class="btn btn-ghost btn-sm" onclick="confirmDelete(&apos;NVDA&apos;)"><span class="iconify text-error" data-icon="heroicons:trash" data-width="20"></span></button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div data-section-id="common_footer_web" data-section-type="common_footer" class="bg-base-200">
+    <!-- Main Footer Content -->
+    <footer class="footer footer-horizontal p-12 text-base-content">
+        <!-- About Section -->
+        <aside>
+            <div class="flex items-center gap-2 mb-4">
+                <span class="iconify text-primary" data-icon="heroicons:chart-bar" data-width="32"></span>
+                <span class="text-2xl font-heading font-bold text-primary">智能投研系统</span>
+            </div>
+            <p class="text-sm leading-relaxed max-w-xs">基于多智能体强化学习的股票预测系统，专为时序数据分析与金融预测研究设计。帮助学生和研究者理解AI在金融领域的应用。</p>
+            <div class="flex gap-4 mt-4">
+                <a class="btn btn-ghost btn-sm btn-circle" title="GitHub项目">
+                    <span class="iconify" data-icon="mdi:github" data-width="20"></span>
+                </a>
+                <a class="btn btn-ghost btn-sm btn-circle" title="技术文档">
+                    <span class="iconify" data-icon="heroicons:document-text" data-width="20"></span>
+                </a>
+                <a class="btn btn-ghost btn-sm btn-circle" title="学术论文">
+                    <span class="iconify" data-icon="heroicons:academic-cap" data-width="20"></span>
+                </a>
+                <a class="btn btn-ghost btn-sm btn-circle" title="邮件联系">
+                    <span class="iconify" data-icon="heroicons:envelope" data-width="20"></span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Core Features -->
+        <nav>
+            <header class="footer-title text-primary font-heading">核心功能</header>
+            <a class="link link-hover" onclick="navigateTo(&apos;market_overview_dashboard&apos;)">市场概览仪表盘</a>
+            <a class="link link-hover" onclick="navigateTo(&apos;prediction_analysis_center&apos;)">预测结果分析</a>
+            <a class="link link-hover" onclick="navigateTo(&apos;agent_comparison_module&apos;)">智能体对比</a>
+            <a class="link link-hover" onclick="navigateTo(&apos;agent_evaluation_page&apos;)">模型性能评估</a>
+            <a class="link link-hover" onclick="navigateTo(&apos;watchlist_management&apos;)">自选股管理</a>
+        </nav>
+
+        <!-- Research Tools -->
+        <nav>
+            <header class="footer-title text-primary font-heading">研究工具</header>
+            <a class="link link-hover" onclick="navigateTo(&apos;prediction_preference_settings&apos;)">预测偏好配置</a>
+            <a class="link link-hover" onclick="navigateTo(&apos;alert_settings_page&apos;)">时序预警设置</a>
+            <a class="link link-hover">历史回溯测试</a>
+            <a class="link link-hover">参数调优界面</a>
+            <a class="link link-hover">模型迭代记录</a>
+        </nav>
+
+        <!-- Learning Resources -->
+        <nav>
+            <header class="footer-title text-primary font-heading">学习资源</header>
+            <a class="link link-hover" onclick="navigateTo(&apos;help_support_page&apos;)">系统使用指南</a>
+            <a class="link link-hover">算法原理解释</a>
+            <a class="link link-hover">时序分析教程</a>
+            <a class="link link-hover">强化学习基础</a>
+            <a class="link link-hover">金融数据科学</a>
+            <a class="link link-hover">常见问题解答</a>
+        </nav>
+
+        <!-- Account & Support -->
+        <nav>
+            <header class="footer-title text-primary font-heading">账户支持</header>
+            <a class="link link-hover" onclick="navigateTo(&apos;login_page&apos;)">用户登录</a>
+            <a class="link link-hover" onclick="navigateTo(&apos;registration_page&apos;)">注册账户</a>
+            <a class="link link-hover" onclick="navigateTo(&apos;user_profile_management&apos;)">个人资料</a>
+            <a class="link link-hover" onclick="navigateTo(&apos;help_support_page&apos;)">技术支持</a>
+            <a class="link link-hover">隐私政策</a>
+            <a class="link link-hover">使用条款</a>
+        </nav>
+    </footer>
+
+    <!-- Bottom Copyright Bar -->
+    <footer class="footer footer-center p-6 bg-base-300 text-base-content border-t border-base-content/10">
+        <aside>
+            <div class="flex flex-col sm:flex-row items-center justify-between w-full max-w-6xl gap-4">
+                <p class="text-sm">© 2025 多智能体强化学习股票预测系统. 版权所有.
+                    <span class="text-base-content/70">面向学生科研的专业化AI金融工具.</span>
+                </p>
+                <div class="flex items-center gap-6 text-sm">
+                    <a class="link link-hover">开源协议</a>
+                    <a class="link link-hover">学术引用</a>
+                    <div class="flex items-center gap-2">
+                        <span class="iconify" data-icon="heroicons:shield-check" data-width="16"></span>
+                        <span>学术研究用途</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="iconify" data-icon="heroicons:cpu-chip" data-width="16"></span>
+                        <span>AI驱动分析</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </footer>
+</div>
+
+<style>
+[data-section-id="common_footer_web"] .footer-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: var(--color-primary);
+}
+
+[data-section-id="common_footer_web"] .link-hover:hover {
+    color: var(--color-secondary);
+    text-shadow: 0 0 4px rgba(51, 255, 204, 0.3);
+    transition: all 0.15s ease-in-out;
+}
+
+[data-section-id="common_footer_web"] .btn-circle:hover {
+    background-color: rgba(102, 102, 255, 0.1);
+    color: var(--color-primary);
+    box-shadow: 0 0 12px rgba(102, 102, 255, 0.3);
+    transform: translateY(-2px);
+}
+
+[data-section-id="common_footer_web"] aside p {
+    color: var(--color-base-content);
+    opacity: 0.8;
+}
+
+[data-section-id="common_footer_web"] .bg-base-300 {
+    background: linear-gradient(135deg, var(--color-base-300) 0%, rgba(26, 26, 26, 0.8) 100%);
+}
+</style>
+
+<script>
+(function() {
+    // Add footer-specific JavaScript functionality
+    
+    // Analytics tracking for footer links (placeholder)
+    const footerLinks = document.querySelectorAll(&apos;[data-section-id="common_footer_web"] .link-hover&apos;);
+    footerLinks.forEach(link => {
+        link.addEventListener(&apos;click&apos;, function(e) {
+            const linkText = e.target.textContent.trim();
+            // Analytics tracking placeholder
+            console.log(`Footer link clicked: ${linkText}`);
+        });
+    });
+
+    // Social media links handling
+    const socialButtons = document.querySelectorAll(&apos;[data-section-id="common_footer_web"] .btn-circle&apos;);
+    socialButtons.forEach(button => {
+        button.addEventListener(&apos;click&apos;, function(e) {
+            e.preventDefault();
+            const icon = e.currentTarget.querySelector(&apos;.iconify&apos;);
+            const iconName = icon?.getAttribute(&apos;data-icon&apos;);
+            
+            // Handle different social/external links
+            switch(iconName) {
+                case &apos;mdi:github&apos;:
+                    window.open(&apos;https://github.com&apos;, &apos;_blank&apos;);
+                    break;
+                case &apos;heroicons:document-text&apos;:
+                    showSystemNotification(&apos;技术文档正在准备中...&apos;, &apos;info&apos;);
+                    break;
+                case &apos;heroicons:academic-cap&apos;:
+                    showSystemNotification(&apos;学术论文即将发布...&apos;, &apos;info&apos;);
+                    break;
+                case &apos;heroicons:envelope&apos;:
+                    window.location.href = &apos;mailto:support@stock-prediction-system.com&apos;;
+                    break;
+                default:
+                    console.log(&apos;Footer button clicked:&apos;, iconName);
+            }
+        });
+    });
+
+    // Copyright year auto-update (if needed)
+    const currentYear = new Date().getFullYear();
+    const copyrightElement = document.querySelector(&apos;[data-section-id="common_footer_web"] .footer-center p&apos;);
+    if (copyrightElement && currentYear > 2025) {
+        copyrightElement.innerHTML = copyrightElement.innerHTML.replace(&apos;2025&apos;, currentYear);
+    }
+})();
+</script>
+
+    <!-- Add/Edit Stock Modal -->
+    <dialog id="add_stock_modal" class="modal">
+        <div class="modal-box glass-panel w-11/12 max-w-2xl">
+            <form method="dialog">
+                <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+            </form>
+            <h3 class="font-bold text-2xl text-primary font-heading" id="modal-title">添加股票</h3>
+            <p class="py-4 text-base-content/80">输入股票代码或名称进行搜索，并设置监控粒度。</p>
+            <div class="form-control gap-4">
+                <input type="hidden" id="edit-stock-code">
+                <div class="form-control">
+                    <label class="label"><span class="label-text">股票代码 / 名称</span></label>
+                    <input type="text" id="stock-search-input" placeholder="例如: AAPL 或 苹果" class="input input-bordered w-full">
+                </div>
+                <div class="form-control">
+                    <label class="label"><span class="label-text">监控粒度</span></label>
+                    <div class="flex items-center gap-4">
+                        <input type="range" id="modal-granularity-slider" min="0" max="100" value="50" class="range range-secondary" oninput="updateGranularityLabel(this, &apos;modal-granularity-label&apos;)">
+                        <span id="modal-granularity-label" class="badge badge-lg badge-secondary font-mono w-24">60分钟</span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-action mt-8">
+                <form method="dialog" class="w-full flex justify-end gap-4">
+                    <button class="btn btn-ghost">取消</button>
+                    <button class="btn btn-primary" onclick="handleSaveStock()">确认添加</button>
+                </form>
+            </div>
+        </div>
+        <form method="dialog" class="modal-backdrop"><button>close</button></form>
+    </dialog>
+    
+    <!-- Delete Confirmation Modal -->
+    <dialog id="delete_confirm_modal" class="modal">
+        <div class="modal-box glass-panel">
+            <h3 class="font-bold text-lg font-heading text-error">确认删除</h3>
+            <p class="py-4" id="delete-confirm-text">您确定要从自选股列表中移除这只股票吗？此操作无法撤销。</p>
+            <div class="modal-action">
+                <form method="dialog" class="w-full flex justify-end gap-4">
+                    <button class="btn btn-ghost">取消</button>
+                    <button class="btn btn-error" id="confirm-delete-button" onclick="deleteStock()">确认删除</button>
+                </form>
+            </div>
+        </div>
+        <form method="dialog" class="modal-backdrop"><button>close</button></form>
+    </dialog>
+
+    <!-- Import/Export Modal -->
+    <dialog id="import_modal" class="modal">
+        <div class="modal-box glass-panel w-11/12 max-w-2xl">
+            <form method="dialog">
+                <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+            </form>
+            <h3 class="font-bold text-2xl text-secondary font-heading">导入 / 导出自选股</h3>
+            <p class="py-4 text-base-content/80">您可以导出当前列表为CSV文件，或从CSV文件导入您的自选股列表。</p>
+            <div class="space-y-6">
+                <div>
+                    <h4 class="font-semibold mb-2">导出</h4>
+                    <p class="text-sm text-base-content/70 mb-2">将您当前的自选股列表导出为CSV文件以便备份或在其他设备上使用。</p>
+                    <button class="btn btn-secondary w-full" onclick="exportWatchlist()">
+                        <span class="iconify" data-icon="heroicons:arrow-down-tray"></span>
+                        导出为 .CSV
+                    </button>
+                </div>
+                <div class="divider">或</div>
+                <div>
+                     <h4 class="font-semibold mb-2">导入</h4>
+                    <p class="text-sm text-base-content/70 mb-2">从CSV文件导入。请确保文件格式为：第一列股票代码，第二列监控粒度(可选)。</p>
+                    <input type="file" class="file-input file-input-bordered file-input-primary w-full" accept=".csv" onchange="importWatchlist(this)">
+                </div>
+            </div>
+        </div>
+        <form method="dialog" class="modal-backdrop"><button>close</button></form>
+    </dialog>
+
+    <script>
+(function() {
+    // Initialize global namespace for app
+    window.APP_GLOBALS = window.APP_GLOBALS || {};
+
+    // Navigation function for page transitions
+    window.navigateTo = function(targetPageId) {
+        const isInIframe = window.self !== window.top;
+        const targetFileName = `${targetPageId}.html`;
+        
+        if (isInIframe) {
+            window.parent.postMessage({
+                type: &apos;iframeNavigation&apos;,
+                targetPageId: targetPageId
+            }, &apos;*&apos;);
+        } else {
+            window.location.href = targetFileName;
+        }
+    };
+
+    // Stock search functionality
+    window.handleStockSearch = function() {
+        const searchInput = document.querySelector(&apos;[data-stock-search-input]&apos;);
+        if (searchInput && searchInput.value.trim()) {
+            // Store search term for results page
+            sessionStorage.setItem(&apos;stockSearchTerm&apos;, searchInput.value.trim());
+            navigateTo(&apos;market_overview_dashboard&apos;);
+        }
+    };
+
+    // Mobile menu toggle
+    window.toggleMobileMenu = function() {
+        const mobileMenu = document.querySelector(&apos;[data-mobile-menu]&apos;);
+        if (mobileMenu) {
+            mobileMenu.classList.toggle(&apos;hidden&apos;);
+        }
+    };
+
+    // Notification system for system alerts
+    window.showSystemNotification = function(message, type = &apos;info&apos;) {
+        const toast = document.createElement(&apos;div&apos;);
+        toast.className = &apos;toast toast-end toast-top z-50&apos;;
+        
+        const alertClass = type === &apos;success&apos; ? &apos;alert-success&apos; : 
+                          type === &apos;error&apos; ? &apos;alert-error&apos; : 
+                          type === &apos;warning&apos; ? &apos;alert-warning&apos; : &apos;alert-info&apos;;
+        
+        const iconName = type === &apos;success&apos; ? &apos;heroicons:check-circle&apos; : 
+                        type === &apos;error&apos; ? &apos;heroicons:x-circle&apos; : 
+                        type === &apos;warning&apos; ? &apos;heroicons:exclamation-triangle&apos; : 
+                        &apos;heroicons:information-circle&apos;;
+        
+        toast.innerHTML = `
+            <div class="alert ${alertClass}">
+                <span class="iconify" data-icon="${iconName}" data-width="20"></span>
+                <span>${message}</span>
+            </div>
+        `;
+        
+        document.body.appendChild(toast);
+        
+        setTimeout(() => {
+            toast.remove();
+        }, 5000);
+    };
+
+    // Theme toggle functionality for dark/light modes
+    window.toggleTheme = function() {
+        const html = document.documentElement;
+        const currentTheme = html.getAttribute(&apos;data-theme&apos;);
+        const newTheme = currentTheme === &apos;black&apos; ? &apos;dark&apos; : &apos;black&apos;;
+        html.setAttribute(&apos;data-theme&apos;, newTheme);
+        localStorage.setItem(&apos;theme&apos;, newTheme);
+    };
+
+    // Initialize theme on load
+    window.initializeTheme = function() {
+        const savedTheme = localStorage.getItem(&apos;theme&apos;) || &apos;black&apos;;
+        document.documentElement.setAttribute(&apos;data-theme&apos;, savedTheme);
+    };
+
+    // User session management
+    window.APP_GLOBALS.user = {
+        isLoggedIn: localStorage.getItem(&apos;userLoggedIn&apos;) === &apos;true&apos;,
+        username: localStorage.getItem(&apos;username&apos;) || &apos;用户&apos;,
+        email: localStorage.getItem(&apos;userEmail&apos;) || &apos;&apos;,
+        
+        login: function(username, email) {
+            this.isLoggedIn = true;
+            this.username = username;
+            this.email = email;
+            localStorage.setItem(&apos;userLoggedIn&apos;, &apos;true&apos;);
+            localStorage.setItem(&apos;username&apos;, username);
+            localStorage.setItem(&apos;userEmail&apos;, email);
+        },
+        
+        logout: function() {
+            this.isLoggedIn = false;
+            this.username = &apos;用户&apos;;
+            this.email = &apos;&apos;;
+            localStorage.removeItem(&apos;userLoggedIn&apos;);
+            localStorage.removeItem(&apos;username&apos;);
+            localStorage.removeItem(&apos;userEmail&apos;);
+            navigateTo(&apos;login_page&apos;);
+        }
+    };
+
+    // Initialize theme when script loads
+    initializeTheme();
+})();
+</script>
+    <script>
+    const GRANULARITY_MAP = [
+        "实时", "1分钟", "5分钟", "15分钟",
+        "30分钟", "60分钟", "2小时", "日线",
+        "周线", "月线"
+    ];
+
+    function getGranularityFromValue(value) {
+        const index = Math.floor(parseInt(value, 10) / 10.01);
+        return GRANULARITY_MAP[index] || "自定义";
+    }
+
+    function updateGranularityLabel(slider, labelId) {
+        const value = slider.value;
+        const labelText = getGranularityFromValue(value);
+        let labelElement;
+
+        if (labelId) {
+            labelElement = document.getElementById(labelId);
+        } else {
+            labelElement = slider.nextElementSibling;
+        }
+
+        if (labelElement) {
+            labelElement.textContent = labelText;
+        }
+    }
+    
+    function filterWatchlist(query) {
+        const table = document.getElementById(&apos;watchlist-table&apos;);
+        const rows = table.querySelectorAll(&apos;tbody tr&apos;);
+        const lowerCaseQuery = query.toLowerCase().trim();
+
+        rows.forEach(row => {
+            const stockCode = row.dataset.stockCode.toLowerCase();
+            const stockName = row.dataset.stockName.toLowerCase();
+            if (stockCode.includes(lowerCaseQuery) || stockName.includes(lowerCaseQuery)) {
+                row.style.display = &apos;&apos;;
+            } else {
+                row.style.display = &apos;none&apos;;
+            }
+        });
+    }
+
+    function toggleAllCheckboxes(source) {
+        const checkboxes = document.querySelectorAll(&apos;#watchlist-table tbody input[type="checkbox"]&apos;);
+        checkboxes.forEach(checkbox => {
+            checkbox.checked = source.checked;
+        });
+    }
+    
+    function openEditModal(code, name, granularityValue) {
+        document.getElementById(&apos;edit-stock-code&apos;).value = code;
+        document.getElementById(&apos;modal-title&apos;).textContent = `编辑股票 - ${name} (${code})`;
+        document.getElementById(&apos;stock-search-input&apos;).value = name;
+        
+        const slider = document.getElementById(&apos;modal-granularity-slider&apos;);
+        slider.value = granularityValue;
+        updateGranularityLabel(slider, &apos;modal-granularity-label&apos;);
+
+        document.querySelector(&apos;#add_stock_modal .modal-action .btn-primary&apos;).textContent = &apos;确认修改&apos;;
+        document.getElementById(&apos;add_stock_modal&apos;).showModal();
+    }
+    
+    function handleSaveStock() {
+        const stockCode = document.getElementById(&apos;edit-stock-code&apos;).value;
+        const stockName = document.getElementById(&apos;stock-search-input&apos;).value;
+
+        if (stockCode) {
+            // This is an edit operation
+            showSystemNotification(`股票 ${stockName} 的设置已更新`, &apos;success&apos;);
+        } else {
+            // This is an add operation
+            if(stockName.trim() === &apos;&apos;) {
+                showSystemNotification(&apos;请输入股票代码或名称&apos;, &apos;error&apos;);
+                return;
+            }
+            showSystemNotification(`股票 ${stockName} 已添加到您的自选股`, &apos;success&apos;);
+        }
+        
+        // Reset modal for next &apos;add stock&apos; operation
+        document.getElementById(&apos;edit-stock-code&apos;).value = &apos;&apos;;
+        document.getElementById(&apos;modal-title&apos;).textContent = &apos;添加股票&apos;;
+        document.getElementById(&apos;stock-search-input&apos;).value = &apos;&apos;;
+        document.querySelector(&apos;#add_stock_modal .modal-action .btn-primary&apos;).textContent = &apos;确认添加&apos;;
+    }
+    
+    function confirmDelete(stockCode) {
+        document.getElementById(&apos;delete-confirm-text&apos;).textContent = `您确定要从自选股列表中移除 ${stockCode} 吗？此操作无法撤销。`;
+        document.getElementById(&apos;confirm-delete-button&apos;).dataset.stockCode = stockCode;
+        document.getElementById(&apos;delete_confirm_modal&apos;).showModal();
+    }
+    
+    function deleteStock() {
+        const stockCode = document.getElementById(&apos;confirm-delete-button&apos;).dataset.stockCode;
+        showSystemNotification(`股票 ${stockCode} 已从自选股中删除`, &apos;info&apos;);
+        
+        // Find and remove the row from the table
+        const rowToRemove = document.querySelector(`#watchlist-table tbody tr[data-stock-code="${stockCode}"]`);
+        if (rowToRemove) {
+            rowToRemove.remove();
+        }
+    }
+    
+    function exportWatchlist() {
+        showSystemNotification(&apos;正在导出您的自选股列表...&apos;, &apos;info&apos;);
+        // Placeholder for CSV export logic
+        setTimeout(() => {
+            showSystemNotification(&apos;导出成功！&apos;, &apos;success&apos;);
+        }, 1500);
+         document.getElementById(&apos;import_modal&apos;).close();
+
+    }
+
+    function importWatchlist(fileInput) {
+        if (fileInput.files.length > 0) {
+            const fileName = fileInput.files[0].name;
+            showSystemNotification(`正在导入文件 ${fileName}...`, &apos;info&apos;);
+            // Placeholder for CSV import logic
+            setTimeout(() => {
+                showSystemNotification(&apos;导入成功，列表已更新！&apos;, &apos;success&apos;);
+            }, 2000);
+            document.getElementById(&apos;import_modal&apos;).close();
+        }
+    }
+
+    // Initialize labels for all sliders on page load
+    document.addEventListener(&apos;DOMContentLoaded&apos;, () => {
+        const sliders = document.querySelectorAll(&apos;.range&apos;);
+        sliders.forEach(slider => {
+            if(slider.id === &apos;modal-granularity-slider&apos;) {
+                 updateGranularityLabel(slider, &apos;modal-granularity-label&apos;);
+            } else {
+                 updateGranularityLabel(slider);
+            }
+        });
+    });
+
+</script>
+
+<script>
+    setTimeout(() => {
+      Holder.run({
+        domain: "placehold.co"
+      })
+    }, 100)
+  </script></body></html>'></iframe>
+                    </div>
+                  </div>
+
+                </body>
+                </html>
+            

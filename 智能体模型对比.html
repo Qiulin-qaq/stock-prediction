@@ -1,0 +1,1630 @@
+
+                <!DOCTYPE html>
+                <html lang="zh">
+                <head>
+                  <meta charset="UTF-8">
+                  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                  <title>智能体模型对比</title>
+                  <style>
+                    *,
+                    *::before,
+                    *::after {
+                      box-sizing: border-box;
+                      margin: 0;
+                    }
+                    .iframe-outer {
+                      position: fixed;
+                      top: 0;
+                      left: 0;
+                      bottom: 0;
+                      right: 0;
+                      display: flex;
+                      justify-content: center;
+                      background-color: #E0E0E0;
+                    }
+                    .iframe-wrapper {
+                      width: 100%;
+                      height: 100%;
+                      margin: 0 auto;
+                      transform-origin: center top;
+                      flex-shrink: 0;
+                    }
+                    #dynamicIframe {
+                      border: none;
+                      width: 100%;
+                      height: 100%;
+                    }
+                  </style>
+                  <script>
+                const width = 1920
+                const height = 1080
+                const resolutionRatio = width && height ? width / height : 1
+                const pageNameMap = {
+                  'login_page': '登录页',
+    'registration_page': '注册页',
+    'forgot_password_page': '忘记密码',
+    'market_overview_dashboard': '市场概览仪表盘',
+    'prediction_analysis_center': '预测结果分析中心',
+    'agent_comparison_module': '智能体模型对比',
+    'agent_evaluation_page': '智能体表现评估',
+    'personalization_settings_center': '个性化设置中心',
+    'watchlist_management': '自选股管理',
+    'prediction_preference_settings': '预测偏好设置',
+    'alert_settings_page': '时序预警设置',
+    'user_profile_management': '用户资料管理',
+    'help_support_page': '帮助与支持'
+                }
+                function setIframeSize(w, h) {
+                  const currentContainerRadio = w / h
+                  let widthValue = w
+                  let heightValue = h
+                  let zoom = 1
+                  if (currentContainerRadio > resolutionRatio) {
+                    widthValue = h * resolutionRatio
+                    heightValue = h
+                  } else {
+                    widthValue = w
+                    heightValue = w / resolutionRatio
+                  }
+                  zoom = width ? widthValue / width : 1
+                  return {
+                    width: widthValue / zoom + 'px',
+                    height: heightValue / zoom + 'px',
+                    zoom,
+                  }
+                }
+                function adjustIframeSize() {
+                  const iframeWrapper = document.querySelector(".iframe-wrapper")
+                  const { width, height, zoom } = setIframeSize(window.innerWidth, window.innerHeight)
+                  iframeWrapper.style.height = height
+                  iframeWrapper.style.width = width
+                  iframeWrapper.style.transform = 'scale(' + zoom + ')'
+                }
+                function sanitizeFilename(name) {
+                  return name.replace(/[\/:*?"<>|]/g, '_')
+                }
+                function handlePostMessage(event) {
+                  if (!event.data) {
+                    return
+                  }
+                  const { type, targetPageId } = event.data
+                  const targetPageName = pageNameMap[targetPageId]
+                  if (type === "iframeNavigation" && targetPageId && targetPageName) {
+                    window.location.href = targetPageName + '.html'
+                  }
+                }
+                window.addEventListener('message', handlePostMessage)
+                window.onload = adjustIframeSize
+                window.onresize = adjustIframeSize
+                window.onunload = () => {
+                  window.removeEventListener('message', handlePostMessage)
+                }
+              </script>
+                </head>
+                <body>
+                  <div class="iframe-outer">
+                    <div class="iframe-wrapper">
+                      <iframe id="dynamicIframe" srcdoc='<html lang="zh-CN" data-theme="black"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智能体模型对比 - 股票预测系统</title>
+    <link href="./assets/static/uxbot/daisyui@5.css" rel="stylesheet" type="text/css">
+    <script src="./assets/static/uxbot/tailwind-browser@4.js"></script>
+    <link href="./assets/static/uxbot/daisyui-themes.css" rel="stylesheet" type="text/css">
+    <script src="./assets/3/3.1.1/iconify.min.js"></script>
+    <script src="./assets/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <style>
+/* Import Google Fonts */
+@import url(&apos;https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap&apos;);
+
+/* DaisyUI Theme Variables Customization - Tech Cold Beauty Theme */
+:root {
+    /* Base Colors - Deep Dark Theme */
+    --color-base-100: rgba(0, 0, 0, 1);           /* Pure Black - main backgrounds */
+    --color-base-200: rgba(13, 13, 13, 1);       /* Dark Grey - secondary backgrounds, cards */
+    --color-base-300: rgba(26, 26, 26, 1);       /* Slightly Lighter Dark Grey - borders, separators */
+    --color-base-content: rgba(240, 240, 240, 1); /* Off-white/Light Grey - primary text */
+    
+    /* Fluorescent Accent Colors */
+    --color-primary: rgba(102, 102, 255, 1);      /* Fluorescent Blue-Purple */
+    --color-primary-content: rgba(0, 0, 0, 1);
+    --color-secondary: rgba(51, 255, 204, 1);     /* Fluorescent Cyan-Green */
+    --color-secondary-content: rgba(0, 0, 0, 1);
+    --color-accent: rgba(255, 136, 51, 1);        /* Fluorescent Red-Orange */
+    --color-accent-content: rgba(0, 0, 0, 1);
+    
+    /* Neutral Colors */
+    --color-neutral: rgba(42, 46, 55, 1);
+    --color-neutral-content: rgba(240, 240, 240, 1);
+    
+    /* Semantic Colors - Vibrant for Tech Aesthetic */
+    --color-success: rgba(0, 255, 127, 1);        /* Vibrant neon green */
+    --color-success-content: rgba(0, 0, 0, 1);
+    --color-warning: rgba(255, 191, 0, 1);        /* Bright orange/yellow */
+    --color-warning-content: rgba(0, 0, 0, 1);
+    --color-error: rgba(255, 51, 102, 1);         /* Bold neon red */
+    --color-error-content: rgba(0, 0, 0, 1);
+    --color-info: rgba(0, 191, 255, 1);           /* Clean bright blue */
+    --color-info-content: rgba(0, 0, 0, 1);
+    
+    /* Border radius and effects - Minimal tech aesthetic */
+    --radius-box: 0.25rem;    /* 4px for crisp, tech feel */
+    --radius-field: 0.25rem;
+    --radius-selector: 0.25rem;
+    --border: 1px;
+}
+
+/* Typography */
+.font-heading {
+    font-family: &apos;Inter&apos;, sans-serif;
+    font-weight: 600;
+}
+
+.font-body {
+    font-family: &apos;Inter&apos;, sans-serif;
+}
+
+.font-mono {
+    font-family: &apos;JetBrains Mono&apos;, monospace;
+}
+
+/* Apply fonts globally */
+h1, h2, h3, h4, h5, h6 {
+    font-family: &apos;Inter&apos;, sans-serif;
+    font-weight: 600;
+}
+
+body, p, span, div, button, input, textarea, select {
+    font-family: &apos;Inter&apos;, sans-serif;
+}
+
+/* Tech-cold beauty effects */
+.glow-primary {
+    box-shadow: 0 0 20px rgba(102, 102, 255, 0.3);
+}
+
+.glow-secondary {
+    box-shadow: 0 0 20px rgba(51, 255, 204, 0.3);
+}
+
+.glow-accent {
+    box-shadow: 0 0 20px rgba(255, 136, 51, 0.3);
+}
+
+/* Smooth transitions for interactive elements */
+.nav-item {
+    transition: all 0.15s ease-in-out;
+}
+
+.nav-item:hover {
+    color: var(--color-secondary);
+    text-shadow: 0 0 8px var(--color-secondary);
+}
+
+/* Custom shadows for tech aesthetic - hard edges */
+.shadow-tech {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(102, 102, 255, 0.1);
+}
+
+.shadow-tech-lg {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(102, 102, 255, 0.2);
+}
+
+/* Frosted glass effect for panels */
+.glass-panel {
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(102, 102, 255, 0.1);
+}
+
+/* Button hover effects with fluorescent glow */
+.btn:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(var(--color-primary), 0.4);
+}
+
+/* Input focus effects */
+.input:focus, .select:focus, .textarea:focus {
+    box-shadow: 0 0 0 2px var(--color-primary), 0 0 12px rgba(var(--color-primary), 0.3);
+}
+</style> <style>
+/* Tech noise texture background for glass panels */
+.glass-panel::before {
+    content: &apos;&apos;;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: 
+        radial-gradient(circle at 25% 25%, rgba(102, 102, 255, 0.1) 1px, transparent 1px),
+        radial-gradient(circle at 75% 75%, rgba(51, 255, 204, 0.08) 1px, transparent 1px),
+        radial-gradient(circle at 50% 50%, rgba(255, 136, 51, 0.06) 1px, transparent 1px);
+    background-size: 20px 20px, 30px 30px, 25px 25px;
+    border-radius: inherit;
+    pointer-events: none;
+    z-index: -1;
+}
+
+/* Enhanced glow effects for interactive elements */
+.btn:hover:not(:disabled) {
+    box-shadow: 0 0 20px rgba(102, 102, 255, 0.4), 0 4px 12px rgba(0, 0, 0, 0.3);
+    transform: translateY(-1px);
+}
+
+.select:focus, .input:focus {
+    box-shadow: 0 0 0 2px var(--color-primary), 0 0 16px rgba(102, 102, 255, 0.3);
+    border-color: var(--color-primary);
+}
+
+/* Chart container styling with tech borders */
+#radarChart, #heatmapChart, #weightChart {
+    position: relative;
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.8) 0%, rgba(13, 13, 13, 0.9) 100%);
+}
+
+#radarChart::before, #heatmapChart::before, #weightChart::before {
+    content: &apos;&apos;;
+    position: absolute;
+    top: -1px;
+    left: -1px;
+    right: -1px;
+    bottom: -1px;
+    background: linear-gradient(45deg, 
+        var(--color-primary) 0%, 
+        var(--color-secondary) 25%, 
+        var(--color-accent) 50%, 
+        var(--color-primary) 75%, 
+        var(--color-secondary) 100%);
+    border-radius: inherit;
+    z-index: -1;
+    opacity: 0.3;
+}
+
+/* Timeline slider custom styling */
+.range::-webkit-slider-thumb {
+    background: var(--color-primary);
+    box-shadow: 0 0 12px rgba(102, 102, 255, 0.6);
+}
+
+.range::-moz-range-thumb {
+    background: var(--color-primary);
+    box-shadow: 0 0 12px rgba(102, 102, 255, 0.6);
+}
+
+/* Stats card hover effects */
+.stats:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4), 0 0 20px rgba(102, 102, 255, 0.2);
+    transition: all 0.3s ease;
+}
+
+/* Multiselect dropdown styling */
+.multiselect-menu {
+    background: rgba(13, 13, 13, 0.95);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(102, 102, 255, 0.2);
+}
+
+.multiselect-checkbox:checked {
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+}
+
+/* Badge glow effects */
+.badge-primary {
+    box-shadow: 0 0 8px rgba(102, 102, 255, 0.4);
+}
+
+.badge-secondary {
+    box-shadow: 0 0 8px rgba(51, 255, 204, 0.4);
+}
+
+.badge-info {
+    box-shadow: 0 0 8px rgba(0, 191, 255, 0.4);
+}
+
+/* Card shadow tech enhancement */
+.card.shadow-tech {
+    box-shadow: 
+        0 4px 12px rgba(0, 0, 0, 0.8),
+        0 0 0 1px rgba(102, 102, 255, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+/* Particle animation for data flow effect */
+@keyframes particle-flow {
+    0% { transform: translateX(-100%) translateY(0); opacity: 0; }
+    50% { opacity: 1; }
+    100% { transform: translateX(100%) translateY(-10px); opacity: 0; }
+}
+
+.chart-particle {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: var(--color-secondary);
+    border-radius: 50%;
+    animation: particle-flow 3s infinite linear;
+    box-shadow: 0 0 4px var(--color-secondary);
+}
+
+/* Tooltip styling for charts */
+.chart-tooltip {
+    background: rgba(0, 0, 0, 0.9) !important;
+    border: 1px solid rgba(102, 102, 255, 0.3) !important;
+    border-radius: 4px !important;
+    backdrop-filter: blur(10px) !important;
+    color: var(--color-base-content) !important;
+    font-family: &apos;Inter&apos;, sans-serif !important;
+}
+
+/* Loading state for charts */
+.chart-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.8);
+    color: var(--color-primary);
+    font-size: 14px;
+}
+
+.chart-loading::before {
+    content: &apos;&apos;;
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgba(102, 102, 255, 0.3);
+    border-top: 2px solid var(--color-primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-right: 8px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Responsive adjustments */
+@media (max-width: 1280px) {
+    .glass-panel {
+        margin: 0 -1rem;
+        border-radius: 0;
+    }
+    
+    #AgentComparisonPlots .grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+  <script src="./assets/static/uxbot/25_6/holder.js"></script></head>
+  <body class="bg-base-100 min-h-screen flex flex-col">
+    <div class="header-wrapper"><div data-section-id="common_header_web" data-section-type="common_header" class="navbar bg-base-100 px-8 py-4 shadow-tech sticky top-0 z-50 glass-panel">
+    <!-- Logo Section -->
+    <div class="navbar-start">
+        <div class="dropdown lg:hidden">
+            <div tabindex="0" role="button" class="btn btn-ghost" onclick="toggleMobileMenu()">
+                <span class="iconify" data-icon="heroicons:bars-3" data-width="24"></span>
+            </div>
+            <ul tabindex="0" class="menu menu-sm dropdown-content mt-3 z-50 p-2 shadow-tech bg-base-200 rounded-box w-52 hidden" data-mobile-menu="">
+                <li><a onclick="navigateTo(&apos;market_overview_dashboard&apos;)">市场概览</a></li>
+                <li><a onclick="navigateTo(&apos;prediction_analysis_center&apos;)">预测分析</a></li>
+                <li><a onclick="navigateTo(&apos;agent_comparison_module&apos;)">智能体对比</a></li>
+                <li><a onclick="navigateTo(&apos;agent_evaluation_page&apos;)">模型评估</a></li>
+                <li><a onclick="navigateTo(&apos;personalization_settings_center&apos;)">个人设置</a></li>
+            </ul>
+        </div>
+        <a onclick="navigateTo(&apos;market_overview_dashboard&apos;)" class="text-2xl font-heading font-bold text-primary cursor-pointer flex items-center gap-2">
+            <span class="iconify" data-icon="heroicons:chart-bar" data-width="28"></span>
+            智能投研系统
+        </a>
+    </div>
+
+    <!-- Navigation Menu -->
+    <div class="navbar-center hidden lg:flex">
+        <ul class="menu menu-horizontal px-1 gap-6">
+            <li><a onclick="navigateTo(&apos;market_overview_dashboard&apos;)" class="nav-item text-base font-medium">市场概览</a></li>
+            <li><a onclick="navigateTo(&apos;prediction_analysis_center&apos;)" class="nav-item text-base font-medium">预测分析</a></li>
+            <li><a onclick="navigateTo(&apos;agent_comparison_module&apos;)" class="nav-item text-base font-medium">智能体对比</a></li>
+            <li><a onclick="navigateTo(&apos;agent_evaluation_page&apos;)" class="nav-item text-base font-medium">模型评估</a></li>
+            <li><a onclick="navigateTo(&apos;personalization_settings_center&apos;)" class="nav-item text-base font-medium">个人设置</a></li>
+        </ul>
+    </div>
+
+    <!-- Stock Search Bar -->
+    <div class="navbar-center hidden lg:flex lg:mx-8 flex-1 max-w-md">
+        <div class="join w-full">
+            <input type="text" placeholder="搜索股票代码或名称..." class="input input-bordered join-item flex-1 bg-base-200" data-stock-search-input="" onkeypress="if(event.key===&apos;Enter&apos;) handleStockSearch()">
+            <button class="btn btn-primary join-item" onclick="handleStockSearch()">
+                <span class="iconify" data-icon="heroicons:magnifying-glass" data-width="20"></span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Right Side Icons -->
+    <div class="navbar-end gap-3">
+        <!-- Theme Toggle -->
+        <button class="btn btn-ghost btn-circle" onclick="toggleTheme()" title="切换主题">
+            <span class="iconify" data-icon="heroicons:sun" data-width="24"></span>
+        </button>
+
+        <!-- System Notifications -->
+        <button class="btn btn-ghost btn-circle" onclick="navigateTo(&apos;alert_settings_page&apos;)" title="系统通知">
+            <div class="indicator">
+                <span class="iconify" data-icon="heroicons:bell" data-width="24"></span>
+                <span class="badge badge-xs badge-secondary indicator-item"></span>
+            </div>
+        </button>
+
+        <!-- Watchlist -->
+        <button class="btn btn-ghost btn-circle" onclick="navigateTo(&apos;watchlist_management&apos;)" title="自选股">
+            <div class="indicator">
+                <span class="iconify" data-icon="heroicons:star" data-width="24"></span>
+                <span class="badge badge-xs badge-accent indicator-item">5</span>
+            </div>
+        </button>
+
+        <!-- User Profile -->
+        <div class="dropdown dropdown-end">
+            <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">
+                <div class="avatar placeholder inline-flex items-center justify-center w-10 h-10 rounded-full bg-primary text-primary-content">
+                    <span class="flex items-center justify-center h-full font-semibold text-lg">U</span>
+                </div>
+            </div>
+            <ul tabindex="0" class="menu menu-sm dropdown-content mt-3 z-50 p-2 shadow-tech bg-base-200 rounded-box w-52">
+                <li><a onclick="navigateTo(&apos;user_profile_management&apos;)" class="justify-between">个人资料<span class="badge badge-sm badge-primary">Pro</span></a></li>
+                <li><a onclick="navigateTo(&apos;prediction_preference_settings&apos;)">预测偏好</a></li>
+                <li><a onclick="navigateTo(&apos;alert_settings_page&apos;)">预警设置</a></li>
+                <li><hr class="border-base-300"></li>
+                <li><a onclick="navigateTo(&apos;help_support_page&apos;)">帮助支持</a></li>
+                <li><a onclick="APP_GLOBALS.user.logout()">退出登录</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<style>
+[data-section-id="common_header_web"] .navbar {
+    border-bottom: var(--border) solid var(--color-base-300);
+    backdrop-filter: blur(10px);
+}
+
+[data-section-id="common_header_web"] .nav-item:hover {
+    color: var(--color-secondary);
+    text-shadow: 0 0 8px rgba(51, 255, 204, 0.5);
+}
+
+[data-section-id="common_header_web"] .input:focus {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+    box-shadow: 0 0 12px rgba(102, 102, 255, 0.3);
+}
+
+[data-section-id="common_header_web"] .dropdown:hover .dropdown-content {
+    display: block;
+}
+
+[data-section-id="common_header_web"] .btn-circle:hover {
+    background-color: rgba(102, 102, 255, 0.1);
+    color: var(--color-primary);
+    box-shadow: 0 0 12px rgba(102, 102, 255, 0.3);
+}
+
+[data-section-id="common_header_web"] .avatar:hover {
+    box-shadow: 0 0 12px rgba(102, 102, 255, 0.4);
+}
+</style>
+
+<script>
+(function() {
+    // Close mobile menu when clicking outside
+    document.addEventListener(&apos;click&apos;, function(e) {
+        const mobileMenu = document.querySelector(&apos;[data-mobile-menu]&apos;);
+        const menuButton = e.target.closest(&apos;.dropdown&apos;);
+        
+        if (mobileMenu && !menuButton && !mobileMenu.contains(e.target)) {
+            mobileMenu.classList.add(&apos;hidden&apos;);
+        }
+    });
+
+    // Enhanced stock search with suggestions
+    const searchInput = document.querySelector(&apos;[data-stock-search-input]&apos;);
+    if (searchInput) {
+        searchInput.addEventListener(&apos;input&apos;, function(e) {
+            const value = e.target.value.trim();
+            if (value.length >= 2) {
+                // Add search suggestions logic here if needed
+                // For now, just validate input format
+                if (/^[A-Za-z0-9]+$/.test(value)) {
+                    e.target.classList.remove(&apos;input-error&apos;);
+                    e.target.classList.add(&apos;input-success&apos;);
+                } else {
+                    e.target.classList.remove(&apos;input-success&apos;);
+                    e.target.classList.add(&apos;input-error&apos;);
+                }
+            } else {
+                e.target.classList.remove(&apos;input-success&apos;, &apos;input-error&apos;);
+            }
+        });
+    }
+
+    // Update user info in header if logged in
+    function updateUserDisplay() {
+        const userAvatar = document.querySelector(&apos;.avatar span&apos;);
+        if (userAvatar && window.APP_GLOBALS.user.isLoggedIn) {
+            userAvatar.textContent = window.APP_GLOBALS.user.username.charAt(0).toUpperCase();
+        }
+    }
+
+    // Initialize user display
+    updateUserDisplay();
+})();
+</script></div>
+    <!-- Main Content -->
+    <div class="flex-1 flex flex-col">
+      <!-- Agent Comparison Header -->
+      <section id="AgentComparisonHeader" class="bg-base-200 px-8 py-6">
+        <div class="max-w-7xl mx-auto">
+          <!-- Back Button and Title Row -->
+          <div class="flex items-center justify-between mb-6">
+            <div class="flex items-center gap-4">
+              <button class="btn btn-ghost btn-sm text-secondary hover:bg-secondary/10 hover:text-secondary" onclick="navigateTo(&apos;market_overview_dashboard&apos;)">
+                <span class="iconify" data-icon="heroicons:arrow-left" data-width="20"></span>
+                返回仪表盘
+              </button>
+              <div class="divider divider-horizontal"></div>
+              <h1 class="text-3xl font-bold text-base-content">
+                智能体模型对比
+              </h1>
+            </div>
+            <div class="badge badge-primary badge-lg">
+              <span class="iconify" data-icon="heroicons:cpu-chip" data-width="16"></span>
+              AI 分析
+            </div>
+          </div>
+          <!-- Control Panel -->
+          <div class="glass-panel rounded-lg p-6">
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+              <!-- Date Range Selector -->
+              <div class="form-control">
+                <label class="label"><span class="label-text text-base-content/80">时间范围</span></label><select id="dateRangeSelect" class="select select-bordered select-sm bg-base-100/50">
+                  <option value="7d">近7天</option>
+                  <option value="30d" selected="">近30天</option>
+                  <option value="90d">近90天</option>
+                  <option value="1y">近1年</option>
+                </select>
+              </div>
+              <!-- Stock Selector -->
+              <div class="form-control">
+                <label class="label"><span class="label-text text-base-content/80">股票标的</span></label><select id="stockSelect" class="select select-bordered select-sm bg-base-100/50">
+                  <option value="AAPL">苹果 (AAPL)</option>
+                  <option value="TSLA" selected="">特斯拉 (TSLA)</option>
+                  <option value="NVDA">英伟达 (NVDA)</option>
+                  <option value="MSFT">微软 (MSFT)</option>
+                </select>
+              </div>
+              <!-- Agent Multi-Select -->
+              <div class="form-control">
+                <label class="label"><span class="label-text text-base-content/80">智能体选择</span></label>
+                <div class="multiselect-component">
+                  <div class="dropdown w-full">
+                    <button tabindex="0" role="button" class="btn btn-sm w-full justify-between multiselect-btn bg-base-100/50">
+                      <span>选择智能体</span><span class="iconify" data-icon="heroicons:chevron-down" data-width="16"></span>
+                    </button>
+                    <ul tabindex="0" class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-full mt-2 multiselect-menu">
+                      <li>
+                        <label class="label cursor-pointer py-2 justify-between"><span class="label-text">LSTM 预测器</span><input type="checkbox" value="LSTM" checked="" class="checkbox checkbox-primary multiselect-checkbox"></label>
+                      </li>
+                      <li>
+                        <label class="label cursor-pointer py-2 justify-between"><span class="label-text">Transformer 模型</span><input type="checkbox" value="Transformer" checked="" class="checkbox checkbox-primary multiselect-checkbox"></label>
+                      </li>
+                      <li>
+                        <label class="label cursor-pointer py-2 justify-between"><span class="label-text">随机森林</span><input type="checkbox" value="RandomForest" checked="" class="checkbox checkbox-primary multiselect-checkbox"></label>
+                      </li>
+                      <li>
+                        <label class="label cursor-pointer py-2 justify-between"><span class="label-text">支持向量机</span><input type="checkbox" value="SVM" class="checkbox checkbox-primary multiselect-checkbox"></label>
+                      </li>
+                      <li>
+                        <label class="label cursor-pointer py-2 justify-between"><span class="label-text">XGBoost</span><input type="checkbox" value="XGBoost" class="checkbox checkbox-primary multiselect-checkbox"></label>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              <!-- Evaluation Dimensions -->
+              <div class="form-control">
+                <label class="label"><span class="label-text text-base-content/80">评估维度</span></label><select id="dimensionSelect" class="select select-bordered select-sm bg-base-100/50">
+                  <option value="accuracy">预测精度</option>
+                  <option value="adaptability" selected="">市场适应性</option>
+                  <option value="risk">风险规避</option>
+                  <option value="stability">稳定性</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- Agent Comparison Plots -->
+      <section id="AgentComparisonPlots" class="flex-1 px-8 py-6 bg-base-100">
+        <div class="max-w-7xl mx-auto">
+          <div class="grid grid-cols-1 xl:grid-cols-2 gap-8">
+            <!-- Radar Chart Card -->
+            <div data-repeatable="true" data-type="chart-card" class="card bg-base-200 shadow-tech glass-panel">
+              <div class="card-body p-6">
+                <div class="flex items-center justify-between mb-4">
+                  <h3 class="card-title text-lg text-base-content">
+                    <span class="iconify text-primary" data-icon="heroicons:chart-pie" data-width="20"></span>
+                    多维度性能雷达图
+                  </h3>
+                  <div class="badge badge-secondary badge-sm">实时</div>
+                </div>
+                <div id="radarChart" class="w-full h-80 bg-base-100/20 rounded-lg border border-primary/20"></div>
+                <div class="mt-4 text-sm text-base-content/70">
+                  <p>
+                    展示各智能体在预测精度、市场适应性、风险规避等维度的综合表现
+                  </p>
+                </div>
+              </div>
+            </div>
+            <!-- Heatmap Card -->
+            <div data-repeatable="true" data-type="chart-card" class="card bg-base-200 shadow-tech glass-panel">
+              <div class="card-body p-6">
+                <div class="flex items-center justify-between mb-4">
+                  <h3 class="card-title text-lg text-base-content">
+                    <span class="iconify text-secondary" data-icon="heroicons:squares-2x2" data-width="20"></span>
+                    时序预测热力图
+                  </h3>
+                  <div class="dropdown dropdown-end">
+                    <div tabindex="0" role="button" class="btn btn-ghost btn-xs">
+                      <span class="iconify" data-icon="heroicons:ellipsis-vertical" data-width="16"></span>
+                    </div>
+                    <ul tabindex="0" class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-32">
+                      <li><a class="text-xs">导出图表</a></li>
+                      <li><a class="text-xs">全屏查看</a></li>
+                    </ul>
+                  </div>
+                </div>
+                <div id="heatmapChart" class="w-full h-80 bg-base-100/20 rounded-lg border border-secondary/20"></div>
+                <div class="mt-4 text-sm text-base-content/70">
+                  <p>显示智能体在不同时间和市场条件下的预测准确度分布</p>
+                </div>
+              </div>
+            </div>
+            <!-- Dynamic Weight Chart Card -->
+            <div data-repeatable="true" data-type="chart-card" class="card bg-base-200 shadow-tech glass-panel xl:col-span-2">
+              <div class="card-body p-6">
+                <div class="flex items-center justify-between mb-4">
+                  <h3 class="card-title text-lg text-base-content">
+                    <span class="iconify text-accent" data-icon="heroicons:chart-bar" data-width="20"></span>
+                    动态权重变化趋势
+                  </h3>
+                  <div class="flex items-center gap-4">
+                    <div class="form-control">
+                      <label class="label cursor-pointer gap-2"><span class="label-text text-sm">自动播放</span><input type="checkbox" id="autoPlayToggle" class="toggle toggle-primary toggle-sm autoPlayToggle spark-custom-autoPlayToggle"></label>
+                    </div>
+                    <button id="playTimelineBtn" class="btn btn-primary btn-sm playTimelineBtn spark-custom-playTimelineBtn">
+                      <span class="iconify" data-icon="heroicons:play" data-width="16"></span>
+                      播放
+                    </button>
+                  </div>
+                </div>
+                <div id="weightChart" class="w-full h-96 bg-base-100/20 rounded-lg border border-accent/20"></div>
+                <div class="mt-4">
+                  <div class="flex items-center justify-between mb-2">
+                    <span class="text-sm text-base-content/70">时间轴控制</span><span id="timelineDisplay" class="text-sm font-mono text-primary">2024-01-01</span>
+                  </div>
+                  <input type="range" min="0" max="100" value="50" id="timelineSlider" class="range range-primary range-sm">
+                  <div class="w-full flex justify-between text-xs text-base-content/50 px-2 mt-1">
+                    <span>开始</span><span>当前</span><span>最新</span>
+                  </div>
+                </div>
+                <div class="mt-4 text-sm text-base-content/70">
+                  <p>
+                    展示各智能体在协同预测网络中权重随时间的动态变化，揭示影响力演进趋势
+                  </p>
+                </div>
+              </div>
+            </div>
+            <!-- Performance Metrics Summary Card -->
+            <div data-repeatable="true" data-type="summary-card" class="card bg-base-200 shadow-tech glass-panel xl:col-span-2">
+              <div class="card-body p-6">
+                <div class="flex items-center justify-between mb-6">
+                  <h3 class="card-title text-lg text-base-content">
+                    <span class="iconify text-info" data-icon="heroicons:clipboard-document-list" data-width="20"></span>
+                    性能指标汇总
+                  </h3>
+                  <div class="badge badge-info badge-sm">实时更新</div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <!-- LSTM Metrics -->
+                  <div class="stats shadow bg-base-100/50 border border-primary/20">
+                    <div class="stat">
+                      <div class="stat-figure text-primary">
+                        <span class="iconify" data-icon="heroicons:cpu-chip" data-width="32"></span>
+                      </div>
+                      <div class="stat-title text-base-content/70">
+                        LSTM 预测器
+                      </div>
+                      <div class="stat-value text-primary text-2xl">92.3%</div>
+                      <div class="stat-desc text-success">
+                        <span class="iconify" data-icon="heroicons:arrow-trending-up" data-width="16"></span>
+                        +2.1% 较上周
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Transformer Metrics -->
+                  <div class="stats shadow bg-base-100/50 border border-secondary/20">
+                    <div class="stat">
+                      <div class="stat-figure text-secondary">
+                        <span class="iconify" data-icon="heroicons:bolt" data-width="32"></span>
+                      </div>
+                      <div class="stat-title text-base-content/70">
+                        Transformer
+                      </div>
+                      <div class="stat-value text-secondary text-2xl">
+                        89.7%
+                      </div>
+                      <div class="stat-desc text-warning">
+                        <span class="iconify" data-icon="heroicons:arrow-trending-down" data-width="16"></span>
+                        -0.8% 较上周
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Random Forest Metrics -->
+                  <div class="stats shadow bg-base-100/50 border border-accent/20">
+                    <div class="stat">
+                      <div class="stat-figure text-accent">
+                        <span class="iconify" data-icon="heroicons:squares-plus" data-width="32"></span>
+                      </div>
+                      <div class="stat-title text-base-content/70">
+                        随机森林
+                      </div>
+                      <div class="stat-value text-accent text-2xl">87.1%</div>
+                      <div class="stat-desc text-success">
+                        <span class="iconify" data-icon="heroicons:arrow-trending-up" data-width="16"></span>
+                        +1.4% 较上周
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+    <!-- Footer -->
+    <div class="footer-wrapper"><div data-section-id="common_footer_web" data-section-type="common_footer" class="bg-base-200">
+    <!-- Main Footer Content -->
+    <footer class="footer footer-horizontal p-12 text-base-content">
+        <!-- About Section -->
+        <aside>
+            <div class="flex items-center gap-2 mb-4">
+                <span class="iconify text-primary" data-icon="heroicons:chart-bar" data-width="32"></span>
+                <span class="text-2xl font-heading font-bold text-primary">智能投研系统</span>
+            </div>
+            <p class="text-sm leading-relaxed max-w-xs">基于多智能体强化学习的股票预测系统，专为时序数据分析与金融预测研究设计。帮助学生和研究者理解AI在金融领域的应用。</p>
+            <div class="flex gap-4 mt-4">
+                <a class="btn btn-ghost btn-sm btn-circle" title="GitHub项目">
+                    <span class="iconify" data-icon="mdi:github" data-width="20"></span>
+                </a>
+                <a class="btn btn-ghost btn-sm btn-circle" title="技术文档">
+                    <span class="iconify" data-icon="heroicons:document-text" data-width="20"></span>
+                </a>
+                <a class="btn btn-ghost btn-sm btn-circle" title="学术论文">
+                    <span class="iconify" data-icon="heroicons:academic-cap" data-width="20"></span>
+                </a>
+                <a class="btn btn-ghost btn-sm btn-circle" title="邮件联系">
+                    <span class="iconify" data-icon="heroicons:envelope" data-width="20"></span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Core Features -->
+        <nav>
+            <header class="footer-title text-primary font-heading">核心功能</header>
+            <a class="link link-hover" onclick="navigateTo(&apos;market_overview_dashboard&apos;)">市场概览仪表盘</a>
+            <a class="link link-hover" onclick="navigateTo(&apos;prediction_analysis_center&apos;)">预测结果分析</a>
+            <a class="link link-hover" onclick="navigateTo(&apos;agent_comparison_module&apos;)">智能体对比</a>
+            <a class="link link-hover" onclick="navigateTo(&apos;agent_evaluation_page&apos;)">模型性能评估</a>
+            <a class="link link-hover" onclick="navigateTo(&apos;watchlist_management&apos;)">自选股管理</a>
+        </nav>
+
+        <!-- Research Tools -->
+        <nav>
+            <header class="footer-title text-primary font-heading">研究工具</header>
+            <a class="link link-hover" onclick="navigateTo(&apos;prediction_preference_settings&apos;)">预测偏好配置</a>
+            <a class="link link-hover" onclick="navigateTo(&apos;alert_settings_page&apos;)">时序预警设置</a>
+            <a class="link link-hover">历史回溯测试</a>
+            <a class="link link-hover">参数调优界面</a>
+            <a class="link link-hover">模型迭代记录</a>
+        </nav>
+
+        <!-- Learning Resources -->
+        <nav>
+            <header class="footer-title text-primary font-heading">学习资源</header>
+            <a class="link link-hover" onclick="navigateTo(&apos;help_support_page&apos;)">系统使用指南</a>
+            <a class="link link-hover">算法原理解释</a>
+            <a class="link link-hover">时序分析教程</a>
+            <a class="link link-hover">强化学习基础</a>
+            <a class="link link-hover">金融数据科学</a>
+            <a class="link link-hover">常见问题解答</a>
+        </nav>
+
+        <!-- Account & Support -->
+        <nav>
+            <header class="footer-title text-primary font-heading">账户支持</header>
+            <a class="link link-hover" onclick="navigateTo(&apos;login_page&apos;)">用户登录</a>
+            <a class="link link-hover" onclick="navigateTo(&apos;registration_page&apos;)">注册账户</a>
+            <a class="link link-hover" onclick="navigateTo(&apos;user_profile_management&apos;)">个人资料</a>
+            <a class="link link-hover" onclick="navigateTo(&apos;help_support_page&apos;)">技术支持</a>
+            <a class="link link-hover">隐私政策</a>
+            <a class="link link-hover">使用条款</a>
+        </nav>
+    </footer>
+
+    <!-- Bottom Copyright Bar -->
+    <footer class="footer footer-center p-6 bg-base-300 text-base-content border-t border-base-content/10">
+        <aside>
+            <div class="flex flex-col sm:flex-row items-center justify-between w-full max-w-6xl gap-4">
+                <p class="text-sm">© 2025 多智能体强化学习股票预测系统. 版权所有.
+                    <span class="text-base-content/70">面向学生科研的专业化AI金融工具.</span>
+                </p>
+                <div class="flex items-center gap-6 text-sm">
+                    <a class="link link-hover">开源协议</a>
+                    <a class="link link-hover">学术引用</a>
+                    <div class="flex items-center gap-2">
+                        <span class="iconify" data-icon="heroicons:shield-check" data-width="16"></span>
+                        <span>学术研究用途</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="iconify" data-icon="heroicons:cpu-chip" data-width="16"></span>
+                        <span>AI驱动分析</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </footer>
+</div>
+
+<style>
+[data-section-id="common_footer_web"] .footer-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: var(--color-primary);
+}
+
+[data-section-id="common_footer_web"] .link-hover:hover {
+    color: var(--color-secondary);
+    text-shadow: 0 0 4px rgba(51, 255, 204, 0.3);
+    transition: all 0.15s ease-in-out;
+}
+
+[data-section-id="common_footer_web"] .btn-circle:hover {
+    background-color: rgba(102, 102, 255, 0.1);
+    color: var(--color-primary);
+    box-shadow: 0 0 12px rgba(102, 102, 255, 0.3);
+    transform: translateY(-2px);
+}
+
+[data-section-id="common_footer_web"] aside p {
+    color: var(--color-base-content);
+    opacity: 0.8;
+}
+
+[data-section-id="common_footer_web"] .bg-base-300 {
+    background: linear-gradient(135deg, var(--color-base-300) 0%, rgba(26, 26, 26, 0.8) 100%);
+}
+</style>
+
+<script>
+(function() {
+    // Add footer-specific JavaScript functionality
+    
+    // Analytics tracking for footer links (placeholder)
+    const footerLinks = document.querySelectorAll(&apos;[data-section-id="common_footer_web"] .link-hover&apos;);
+    footerLinks.forEach(link => {
+        link.addEventListener(&apos;click&apos;, function(e) {
+            const linkText = e.target.textContent.trim();
+            // Analytics tracking placeholder
+            console.log(`Footer link clicked: ${linkText}`);
+        });
+    });
+
+    // Social media links handling
+    const socialButtons = document.querySelectorAll(&apos;[data-section-id="common_footer_web"] .btn-circle&apos;);
+    socialButtons.forEach(button => {
+        button.addEventListener(&apos;click&apos;, function(e) {
+            e.preventDefault();
+            const icon = e.currentTarget.querySelector(&apos;.iconify&apos;);
+            const iconName = icon?.getAttribute(&apos;data-icon&apos;);
+            
+            // Handle different social/external links
+            switch(iconName) {
+                case &apos;mdi:github&apos;:
+                    window.open(&apos;https://github.com&apos;, &apos;_blank&apos;);
+                    break;
+                case &apos;heroicons:document-text&apos;:
+                    showSystemNotification(&apos;技术文档正在准备中...&apos;, &apos;info&apos;);
+                    break;
+                case &apos;heroicons:academic-cap&apos;:
+                    showSystemNotification(&apos;学术论文即将发布...&apos;, &apos;info&apos;);
+                    break;
+                case &apos;heroicons:envelope&apos;:
+                    window.location.href = &apos;mailto:support@stock-prediction-system.com&apos;;
+                    break;
+                default:
+                    console.log(&apos;Footer button clicked:&apos;, iconName);
+            }
+        });
+    });
+
+    // Copyright year auto-update (if needed)
+    const currentYear = new Date().getFullYear();
+    const copyrightElement = document.querySelector(&apos;[data-section-id="common_footer_web"] .footer-center p&apos;);
+    if (copyrightElement && currentYear > 2025) {
+        copyrightElement.innerHTML = copyrightElement.innerHTML.replace(&apos;2025&apos;, currentYear);
+    }
+})();
+</script></div>
+    <script>
+(function() {
+    // Initialize global namespace for app
+    window.APP_GLOBALS = window.APP_GLOBALS || {};
+
+    // Navigation function for page transitions
+    window.navigateTo = function(targetPageId) {
+        const isInIframe = window.self !== window.top;
+        const targetFileName = `${targetPageId}.html`;
+        
+        if (isInIframe) {
+            window.parent.postMessage({
+                type: &apos;iframeNavigation&apos;,
+                targetPageId: targetPageId
+            }, &apos;*&apos;);
+        } else {
+            window.location.href = targetFileName;
+        }
+    };
+
+    // Stock search functionality
+    window.handleStockSearch = function() {
+        const searchInput = document.querySelector(&apos;[data-stock-search-input]&apos;);
+        if (searchInput && searchInput.value.trim()) {
+            // Store search term for results page
+            sessionStorage.setItem(&apos;stockSearchTerm&apos;, searchInput.value.trim());
+            navigateTo(&apos;market_overview_dashboard&apos;);
+        }
+    };
+
+    // Mobile menu toggle
+    window.toggleMobileMenu = function() {
+        const mobileMenu = document.querySelector(&apos;[data-mobile-menu]&apos;);
+        if (mobileMenu) {
+            mobileMenu.classList.toggle(&apos;hidden&apos;);
+        }
+    };
+
+    // Notification system for system alerts
+    window.showSystemNotification = function(message, type = &apos;info&apos;) {
+        const toast = document.createElement(&apos;div&apos;);
+        toast.className = &apos;toast toast-end toast-top z-50&apos;;
+        
+        const alertClass = type === &apos;success&apos; ? &apos;alert-success&apos; : 
+                          type === &apos;error&apos; ? &apos;alert-error&apos; : 
+                          type === &apos;warning&apos; ? &apos;alert-warning&apos; : &apos;alert-info&apos;;
+        
+        const iconName = type === &apos;success&apos; ? &apos;heroicons:check-circle&apos; : 
+                        type === &apos;error&apos; ? &apos;heroicons:x-circle&apos; : 
+                        type === &apos;warning&apos; ? &apos;heroicons:exclamation-triangle&apos; : 
+                        &apos;heroicons:information-circle&apos;;
+        
+        toast.innerHTML = `
+            <div class="alert ${alertClass}">
+                <span class="iconify" data-icon="${iconName}" data-width="20"></span>
+                <span>${message}</span>
+            </div>
+        `;
+        
+        document.body.appendChild(toast);
+        
+        setTimeout(() => {
+            toast.remove();
+        }, 5000);
+    };
+
+    // Theme toggle functionality for dark/light modes
+    window.toggleTheme = function() {
+        const html = document.documentElement;
+        const currentTheme = html.getAttribute(&apos;data-theme&apos;);
+        const newTheme = currentTheme === &apos;black&apos; ? &apos;dark&apos; : &apos;black&apos;;
+        html.setAttribute(&apos;data-theme&apos;, newTheme);
+        localStorage.setItem(&apos;theme&apos;, newTheme);
+    };
+
+    // Initialize theme on load
+    window.initializeTheme = function() {
+        const savedTheme = localStorage.getItem(&apos;theme&apos;) || &apos;black&apos;;
+        document.documentElement.setAttribute(&apos;data-theme&apos;, savedTheme);
+    };
+
+    // User session management
+    window.APP_GLOBALS.user = {
+        isLoggedIn: localStorage.getItem(&apos;userLoggedIn&apos;) === &apos;true&apos;,
+        username: localStorage.getItem(&apos;username&apos;) || &apos;用户&apos;,
+        email: localStorage.getItem(&apos;userEmail&apos;) || &apos;&apos;,
+        
+        login: function(username, email) {
+            this.isLoggedIn = true;
+            this.username = username;
+            this.email = email;
+            localStorage.setItem(&apos;userLoggedIn&apos;, &apos;true&apos;);
+            localStorage.setItem(&apos;username&apos;, username);
+            localStorage.setItem(&apos;userEmail&apos;, email);
+        },
+        
+        logout: function() {
+            this.isLoggedIn = false;
+            this.username = &apos;用户&apos;;
+            this.email = &apos;&apos;;
+            localStorage.removeItem(&apos;userLoggedIn&apos;);
+            localStorage.removeItem(&apos;username&apos;);
+            localStorage.removeItem(&apos;userEmail&apos;);
+            navigateTo(&apos;login_page&apos;);
+        }
+    };
+
+    // Initialize theme when script loads
+    initializeTheme();
+})();
+</script><script>
+(function() {
+    // Chart instances
+    let radarChart, heatmapChart, weightChart;
+    let timelineAnimation;
+    let isPlaying = false;
+
+    // Mock data for demonstrations
+    const mockAgentData = {
+        radar: {
+            LSTM: [92, 88, 85, 90, 87],
+            Transformer: [89, 92, 88, 85, 91],
+            RandomForest: [85, 85, 92, 88, 84]
+        },
+        heatmap: generateHeatmapData(),
+        weights: generateWeightData()
+    };
+
+    // Initialize all charts
+    function initializeCharts() {
+        initRadarChart();
+        initHeatmapChart();
+        initWeightChart();
+        setupEventListeners();
+    }
+
+    // Radar Chart Initialization
+    function initRadarChart() {
+        const chartDom = document.getElementById(&apos;radarChart&apos;);
+        if (!chartDom) return;
+
+        radarChart = echarts.init(chartDom, &apos;dark&apos;);
+        
+        const option = {
+            backgroundColor: &apos;transparent&apos;,
+            tooltip: {
+                trigger: &apos;item&apos;,
+                backgroundColor: &apos;rgba(0, 0, 0, 0.9)&apos;,
+                borderColor: &apos;rgba(102, 102, 255, 0.3)&apos;,
+                textStyle: { color: &apos;#f0f0f0&apos; }
+            },
+            legend: {
+                data: [&apos;LSTM&apos;, &apos;Transformer&apos;, &apos;随机森林&apos;],
+                textStyle: { color: &apos;#f0f0f0&apos; },
+                bottom: 10
+            },
+            radar: {
+                indicator: [
+                    { name: &apos;预测精度&apos;, max: 100 },
+                    { name: &apos;市场适应性&apos;, max: 100 },
+                    { name: &apos;风险规避&apos;, max: 100 },
+                    { name: &apos;稳定性&apos;, max: 100 },
+                    { name: &apos;响应速度&apos;, max: 100 }
+                ],
+                splitArea: {
+                    areaStyle: {
+                        color: [&apos;rgba(102, 102, 255, 0.1)&apos;, &apos;rgba(51, 255, 204, 0.05)&apos;]
+                    }
+                },
+                axisLine: { lineStyle: { color: &apos;rgba(102, 102, 255, 0.3)&apos; } },
+                splitLine: { lineStyle: { color: &apos;rgba(102, 102, 255, 0.2)&apos; } }
+            },
+            series: [{
+                type: &apos;radar&apos;,
+                data: [
+                    {
+                        value: mockAgentData.radar.LSTM,
+                        name: &apos;LSTM&apos;,
+                        itemStyle: { color: &apos;rgba(102, 102, 255, 0.8)&apos; },
+                        areaStyle: { color: &apos;rgba(102, 102, 255, 0.2)&apos; }
+                    },
+                    {
+                        value: mockAgentData.radar.Transformer,
+                        name: &apos;Transformer&apos;,
+                        itemStyle: { color: &apos;rgba(51, 255, 204, 0.8)&apos; },
+                        areaStyle: { color: &apos;rgba(51, 255, 204, 0.2)&apos; }
+                    },
+                    {
+                        value: mockAgentData.radar.RandomForest,
+                        name: &apos;随机森林&apos;,
+                        itemStyle: { color: &apos;rgba(255, 136, 51, 0.8)&apos; },
+                        areaStyle: { color: &apos;rgba(255, 136, 51, 0.2)&apos; }
+                    }
+                ]
+            }]
+        };
+
+        radarChart.setOption(option);
+    }
+
+    // Heatmap Chart Initialization
+    function initHeatmapChart() {
+        const chartDom = document.getElementById(&apos;heatmapChart&apos;);
+        if (!chartDom) return;
+
+        heatmapChart = echarts.init(chartDom, &apos;dark&apos;);
+        
+        const option = {
+            backgroundColor: &apos;transparent&apos;,
+            tooltip: {
+                position: &apos;top&apos;,
+                backgroundColor: &apos;rgba(0, 0, 0, 0.9)&apos;,
+                borderColor: &apos;rgba(51, 255, 204, 0.3)&apos;,
+                textStyle: { color: &apos;#f0f0f0&apos; }
+            },
+            grid: {
+                height: &apos;70%&apos;,
+                top: &apos;10%&apos;
+            },
+            xAxis: {
+                type: &apos;category&apos;,
+                data: [&apos;LSTM&apos;, &apos;Transformer&apos;, &apos;随机森林&apos;, &apos;SVM&apos;, &apos;XGBoost&apos;],
+                splitArea: { show: true },
+                axisLabel: { color: &apos;#f0f0f0&apos; }
+            },
+            yAxis: {
+                type: &apos;category&apos;,
+                data: [&apos;周一&apos;, &apos;周二&apos;, &apos;周三&apos;, &apos;周四&apos;, &apos;周五&apos;],
+                splitArea: { show: true },
+                axisLabel: { color: &apos;#f0f0f0&apos; }
+            },
+            visualMap: {
+                min: 0,
+                max: 100,
+                calculable: true,
+                orient: &apos;horizontal&apos;,
+                left: &apos;center&apos;,
+                bottom: &apos;5%&apos;,
+                inRange: {
+                    color: [&apos;rgba(102, 102, 255, 0.3)&apos;, &apos;rgba(51, 255, 204, 0.8)&apos;, &apos;rgba(255, 136, 51, 1)&apos;]
+                },
+                textStyle: { color: &apos;#f0f0f0&apos; }
+            },
+            series: [{
+                name: &apos;预测准确度&apos;,
+                type: &apos;heatmap&apos;,
+                data: mockAgentData.heatmap,
+                label: {
+                    show: true,
+                    color: &apos;#000&apos;
+                },
+                emphasis: {
+                    itemStyle: {
+                        shadowBlur: 10,
+                        shadowColor: &apos;rgba(51, 255, 204, 0.5)&apos;
+                    }
+                }
+            }]
+        };
+
+        heatmapChart.setOption(option);
+    }
+
+    // Weight Chart Initialization
+    function initWeightChart() {
+        const chartDom = document.getElementById(&apos;weightChart&apos;);
+        if (!chartDom) return;
+
+        weightChart = echarts.init(chartDom, &apos;dark&apos;);
+        
+        const option = {
+            backgroundColor: &apos;transparent&apos;,
+            tooltip: {
+                trigger: &apos;axis&apos;,
+                backgroundColor: &apos;rgba(0, 0, 0, 0.9)&apos;,
+                borderColor: &apos;rgba(255, 136, 51, 0.3)&apos;,
+                textStyle: { color: &apos;#f0f0f0&apos; }
+            },
+            legend: {
+                data: [&apos;LSTM&apos;, &apos;Transformer&apos;, &apos;随机森林&apos;],
+                textStyle: { color: &apos;#f0f0f0&apos; },
+                top: 10
+            },
+            grid: {
+                left: &apos;3%&apos;,
+                right: &apos;4%&apos;,
+                bottom: &apos;3%&apos;,
+                containLabel: true
+            },
+            xAxis: {
+                type: &apos;category&apos;,
+                boundaryGap: false,
+                data: mockAgentData.weights.dates,
+                axisLabel: { color: &apos;#f0f0f0&apos; },
+                axisLine: { lineStyle: { color: &apos;rgba(102, 102, 255, 0.3)&apos; } }
+            },
+            yAxis: {
+                type: &apos;value&apos;,
+                axisLabel: { color: &apos;#f0f0f0&apos; },
+                axisLine: { lineStyle: { color: &apos;rgba(102, 102, 255, 0.3)&apos; } },
+                splitLine: { lineStyle: { color: &apos;rgba(102, 102, 255, 0.1)&apos; } }
+            },
+            series: [
+                {
+                    name: &apos;LSTM&apos;,
+                    type: &apos;line&apos;,
+                    stack: &apos;Total&apos;,
+                    areaStyle: { color: &apos;rgba(102, 102, 255, 0.3)&apos; },
+                    lineStyle: { color: &apos;rgba(102, 102, 255, 1)&apos; },
+                    data: mockAgentData.weights.LSTM
+                },
+                {
+                    name: &apos;Transformer&apos;,
+                    type: &apos;line&apos;,
+                    stack: &apos;Total&apos;,
+                    areaStyle: { color: &apos;rgba(51, 255, 204, 0.3)&apos; },
+                    lineStyle: { color: &apos;rgba(51, 255, 204, 1)&apos; },
+                    data: mockAgentData.weights.Transformer
+                },
+                {
+                    name: &apos;随机森林&apos;,
+                    type: &apos;line&apos;,
+                    stack: &apos;Total&apos;,
+                    areaStyle: { color: &apos;rgba(255, 136, 51, 0.3)&apos; },
+                    lineStyle: { color: &apos;rgba(255, 136, 51, 1)&apos; },
+                    data: mockAgentData.weights.RandomForest
+                }
+            ]
+        };
+
+        weightChart.setOption(option);
+    }
+
+    // Event Listeners Setup
+    function setupEventListeners() {
+        // Multiselect functionality
+        setupMultiselect();
+        
+        // Timeline controls
+        const playBtn = document.getElementById(&apos;playTimelineBtn&apos;);
+        const autoPlayToggle = document.getElementById(&apos;autoPlayToggle&apos;);
+        const timelineSlider = document.getElementById(&apos;timelineSlider&apos;);
+        
+        if (playBtn) {
+            playBtn.addEventListener(&apos;click&apos;, toggleTimelinePlayback);
+        }
+        
+        if (autoPlayToggle) {
+            autoPlayToggle.addEventListener(&apos;change&apos;, handleAutoPlayToggle);
+        }
+        
+        if (timelineSlider) {
+            timelineSlider.addEventListener(&apos;input&apos;, handleTimelineSliderChange);
+        }
+
+        // Filter controls
+        const selectors = [&apos;dateRangeSelect&apos;, &apos;stockSelect&apos;, &apos;dimensionSelect&apos;];
+        selectors.forEach(id => {
+            const element = document.getElementById(id);
+            if (element) {
+                element.addEventListener(&apos;change&apos;, updateChartsData);
+            }
+        });
+
+        // Window resize handling
+        window.addEventListener(&apos;resize&apos;, handleResize);
+    }
+
+    // Multiselect Component Setup
+    function setupMultiselect() {
+        const component = document.querySelector(&apos;.multiselect-component&apos;);
+        if (!component) return;
+
+        const dropdownBtn = component.querySelector(&apos;.multiselect-btn&apos;);
+        const dropdownMenu = component.querySelector(&apos;.multiselect-menu&apos;);
+        const checkboxes = component.querySelectorAll(&apos;.multiselect-checkbox&apos;);
+
+        if (!dropdownBtn || !dropdownMenu || !checkboxes) return;
+
+        const defaultBtnText = dropdownBtn.querySelector(&apos;span&apos;).textContent;
+
+        // Prevent dropdown menu from closing when clicking inside
+        dropdownMenu.addEventListener(&apos;click&apos;, (e) => {
+            e.stopPropagation();
+        });
+
+        // Update selection display
+        function updateSelection() {
+            const selected = [];
+            checkboxes.forEach(checkbox => {
+                if (checkbox.checked) {
+                    selected.push(checkbox.value);
+                }
+            });
+
+            dropdownBtn.querySelector(&apos;span&apos;).textContent = selected.length === 0
+                ? defaultBtnText
+                : `${selected.length} 个智能体已选择`;
+
+            // Update charts based on selection
+            updateChartsData();
+        }
+
+        // Add event listeners to checkboxes
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener(&apos;change&apos;, updateSelection);
+        });
+
+        // Initialize state
+        updateSelection();
+    }
+
+    // Timeline Playback Control
+    function toggleTimelinePlayback() {
+        const playBtn = document.getElementById(&apos;playTimelineBtn&apos;);
+        const playIcon = playBtn.querySelector(&apos;.iconify&apos;);
+        
+        if (isPlaying) {
+            clearInterval(timelineAnimation);
+            isPlaying = false;
+            playBtn.innerHTML = &apos;<span class="iconify" data-icon="heroicons:play" data-width="16"></span>播放&apos;;
+        } else {
+            startTimelineAnimation();
+            isPlaying = true;
+            playBtn.innerHTML = &apos;<span class="iconify" data-icon="heroicons:pause" data-width="16"></span>暂停&apos;;
+        }
+    }
+
+    function startTimelineAnimation() {
+        const slider = document.getElementById(&apos;timelineSlider&apos;);
+        const display = document.getElementById(&apos;timelineDisplay&apos;);
+        
+        timelineAnimation = setInterval(() => {
+            let currentValue = parseInt(slider.value);
+            currentValue += 2;
+            
+            if (currentValue > 100) {
+                currentValue = 0;
+            }
+            
+            slider.value = currentValue;
+            updateTimelineDisplay(currentValue);
+            
+            // Update weight chart with animation
+            updateWeightChartFrame(currentValue);
+        }, 200);
+    }
+
+    function handleAutoPlayToggle(e) {
+        if (e.target.checked && !isPlaying) {
+            toggleTimelinePlayback();
+        } else if (!e.target.checked && isPlaying) {
+            toggleTimelinePlayback();
+        }
+    }
+
+    function handleTimelineSliderChange(e) {
+        const value = parseInt(e.target.value);
+        updateTimelineDisplay(value);
+        updateWeightChartFrame(value);
+    }
+
+    function updateTimelineDisplay(value) {
+        const display = document.getElementById(&apos;timelineDisplay&apos;);
+        if (display) {
+            const startDate = new Date(&apos;2024-01-01&apos;);
+            const endDate = new Date(&apos;2024-12-31&apos;);
+            const currentDate = new Date(startDate.getTime() + (endDate.getTime() - startDate.getTime()) * (value / 100));
+            display.textContent = currentDate.toISOString().split(&apos;T&apos;)[0];
+        }
+    }
+
+    function updateWeightChartFrame(timeValue) {
+        if (!weightChart) return;
+        
+        // Simulate dynamic weight changes over time
+        const frameIndex = Math.floor((timeValue / 100) * (mockAgentData.weights.dates.length - 1));
+        
+        // Add visual indicator for current time frame
+        weightChart.setOption({
+            graphic: [{
+                type: &apos;line&apos;,
+                shape: {
+                    x1: frameIndex * (100 / mockAgentData.weights.dates.length) + &apos;%&apos;,
+                    y1: &apos;10%&apos;,
+                    x2: frameIndex * (100 / mockAgentData.weights.dates.length) + &apos;%&apos;,
+                    y2: &apos;90%&apos;
+                },
+                style: {
+                    stroke: &apos;rgba(255, 136, 51, 0.8)&apos;,
+                    lineWidth: 2
+                }
+            }]
+        });
+    }
+
+    // Data Update Functions
+    function updateChartsData() {
+        // Get selected filters
+        const dateRange = document.getElementById(&apos;dateRangeSelect&apos;)?.value;
+        const stock = document.getElementById(&apos;stockSelect&apos;)?.value;
+        const dimension = document.getElementById(&apos;dimensionSelect&apos;)?.value;
+        
+        // Get selected agents
+        const selectedAgents = [];
+        document.querySelectorAll(&apos;.multiselect-checkbox:checked&apos;).forEach(cb => {
+            selectedAgents.push(cb.value);
+        });
+
+        // Update charts with filtered data
+        if (radarChart) {
+            updateRadarChartData(selectedAgents, dimension);
+        }
+        
+        if (heatmapChart) {
+            updateHeatmapChartData(selectedAgents, dateRange);
+        }
+        
+        if (weightChart) {
+            updateWeightChartData(selectedAgents, dateRange);
+        }
+
+        // Show notification
+        showSystemNotification(`已更新图表数据 - ${stock} (${dateRange})`, &apos;success&apos;);
+    }
+
+    function updateRadarChartData(agents, dimension) {
+        // Simulate data update based on filters
+        const newData = agents.map(agent => ({
+            value: mockAgentData.radar[agent] || [80, 75, 85, 80, 82],
+            name: agent,
+            itemStyle: { color: getAgentColor(agent) },
+            areaStyle: { color: getAgentColor(agent, 0.2) }
+        }));
+
+        radarChart.setOption({
+            series: [{ data: newData }],
+            legend: { data: agents }
+        });
+    }
+
+    function updateHeatmapChartData(agents, dateRange) {
+        // Generate new heatmap data
+        const newData = generateHeatmapData(agents);
+        heatmapChart.setOption({
+            xAxis: { data: agents },
+            series: [{ data: newData }]
+        });
+    }
+
+    function updateWeightChartData(agents, dateRange) {
+        // Generate new weight data
+        const newWeightData = generateWeightData(agents, dateRange);
+        
+        const series = agents.map(agent => ({
+            name: agent,
+            type: &apos;line&apos;,
+            stack: &apos;Total&apos;,
+            areaStyle: { color: getAgentColor(agent, 0.3) },
+            lineStyle: { color: getAgentColor(agent) },
+            data: newWeightData[agent] || []
+        }));
+
+        weightChart.setOption({
+            series: series,
+            legend: { data: agents }
+        });
+    }
+
+    // Utility Functions
+    function getAgentColor(agent, alpha = 1) {
+        const colors = {
+            &apos;LSTM&apos;: `rgba(102, 102, 255, ${alpha})`,
+            &apos;Transformer&apos;: `rgba(51, 255, 204, ${alpha})`,
+            &apos;RandomForest&apos;: `rgba(255, 136, 51, ${alpha})`,
+            &apos;SVM&apos;: `rgba(255, 51, 102, ${alpha})`,
+            &apos;XGBoost&apos;: `rgba(0, 255, 127, ${alpha})`
+        };
+        return colors[agent] || `rgba(240, 240, 240, ${alpha})`;
+    }
+
+    function generateHeatmapData(agents = [&apos;LSTM&apos;, &apos;Transformer&apos;, &apos;RandomForest&apos;, &apos;SVM&apos;, &apos;XGBoost&apos;]) {
+        const data = [];
+        const days = [&apos;周一&apos;, &apos;周二&apos;, &apos;周三&apos;, &apos;周四&apos;, &apos;周五&apos;];
+        
+        for (let i = 0; i < agents.length; i++) {
+            for (let j = 0; j < days.length; j++) {
+                data.push([i, j, Math.round(Math.random() * 40 + 60)]);
+            }
+        }
+        return data;
+    }
+
+    function generateWeightData(agents = [&apos;LSTM&apos;, &apos;Transformer&apos;, &apos;RandomForest&apos;], dateRange = &apos;30d&apos;) {
+        const days = dateRange === &apos;7d&apos; ? 7 : dateRange === &apos;30d&apos; ? 30 : 90;
+        const dates = [];
+        const data = {};
+        
+        // Generate dates
+        for (let i = 0; i < days; i++) {
+            const date = new Date();
+            date.setDate(date.getDate() - (days - i));
+            dates.push(date.toISOString().split(&apos;T&apos;)[0]);
+        }
+        
+        // Generate weight data for each agent
+        agents.forEach(agent => {
+            data[agent] = [];
+            let baseWeight = Math.random() * 0.4 + 0.3; // 0.3-0.7 base
+            
+            for (let i = 0; i < days; i++) {
+                baseWeight += (Math.random() - 0.5) * 0.1;
+                baseWeight = Math.max(0.1, Math.min(0.9, baseWeight));
+                data[agent].push(Math.round(baseWeight * 100));
+            }
+        });
+        
+        data.dates = dates;
+        return data;
+    }
+
+    function handleResize() {
+        if (radarChart) radarChart.resize();
+        if (heatmapChart) heatmapChart.resize();
+        if (weightChart) weightChart.resize();
+    }
+
+    // Initialize everything when DOM is ready
+    document.addEventListener(&apos;DOMContentLoaded&apos;, function() {
+        // Small delay to ensure ECharts is fully loaded
+        setTimeout(initializeCharts, 100);
+    });
+
+    // Cleanup on page unload
+    window.addEventListener(&apos;beforeunload&apos;, function() {
+        if (timelineAnimation) {
+            clearInterval(timelineAnimation);
+        }
+        if (radarChart) radarChart.dispose();
+        if (heatmapChart) heatmapChart.dispose();
+        if (weightChart) weightChart.dispose();
+    });
+
+})();
+</script>
+  
+
+<script>
+    setTimeout(() => {
+      Holder.run({
+        domain: "placehold.co"
+      })
+    }, 100)
+  </script></body></html>'></iframe>
+                    </div>
+                  </div>
+
+                </body>
+                </html>
+            

@@ -1,0 +1,1524 @@
+
+                <!DOCTYPE html>
+                <html lang="zh">
+                <head>
+                  <meta charset="UTF-8">
+                  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                  <title>时序预警设置</title>
+                  <style>
+                    *,
+                    *::before,
+                    *::after {
+                      box-sizing: border-box;
+                      margin: 0;
+                    }
+                    .iframe-outer {
+                      position: fixed;
+                      top: 0;
+                      left: 0;
+                      bottom: 0;
+                      right: 0;
+                      display: flex;
+                      justify-content: center;
+                      background-color: #E0E0E0;
+                    }
+                    .iframe-wrapper {
+                      width: 100%;
+                      height: 100%;
+                      margin: 0 auto;
+                      transform-origin: center top;
+                      flex-shrink: 0;
+                    }
+                    #dynamicIframe {
+                      border: none;
+                      width: 100%;
+                      height: 100%;
+                    }
+                  </style>
+                  <script>
+                const width = 1920
+                const height = 1080
+                const resolutionRatio = width && height ? width / height : 1
+                const pageNameMap = {
+                  'login_page': '登录页',
+    'registration_page': '注册页',
+    'forgot_password_page': '忘记密码',
+    'market_overview_dashboard': '市场概览仪表盘',
+    'prediction_analysis_center': '预测结果分析中心',
+    'agent_comparison_module': '智能体模型对比',
+    'agent_evaluation_page': '智能体表现评估',
+    'personalization_settings_center': '个性化设置中心',
+    'watchlist_management': '自选股管理',
+    'prediction_preference_settings': '预测偏好设置',
+    'alert_settings_page': '时序预警设置',
+    'user_profile_management': '用户资料管理',
+    'help_support_page': '帮助与支持'
+                }
+                function setIframeSize(w, h) {
+                  const currentContainerRadio = w / h
+                  let widthValue = w
+                  let heightValue = h
+                  let zoom = 1
+                  if (currentContainerRadio > resolutionRatio) {
+                    widthValue = h * resolutionRatio
+                    heightValue = h
+                  } else {
+                    widthValue = w
+                    heightValue = w / resolutionRatio
+                  }
+                  zoom = width ? widthValue / width : 1
+                  return {
+                    width: widthValue / zoom + 'px',
+                    height: heightValue / zoom + 'px',
+                    zoom,
+                  }
+                }
+                function adjustIframeSize() {
+                  const iframeWrapper = document.querySelector(".iframe-wrapper")
+                  const { width, height, zoom } = setIframeSize(window.innerWidth, window.innerHeight)
+                  iframeWrapper.style.height = height
+                  iframeWrapper.style.width = width
+                  iframeWrapper.style.transform = 'scale(' + zoom + ')'
+                }
+                function sanitizeFilename(name) {
+                  return name.replace(/[\/:*?"<>|]/g, '_')
+                }
+                function handlePostMessage(event) {
+                  if (!event.data) {
+                    return
+                  }
+                  const { type, targetPageId } = event.data
+                  const targetPageName = pageNameMap[targetPageId]
+                  if (type === "iframeNavigation" && targetPageId && targetPageName) {
+                    window.location.href = targetPageName + '.html'
+                  }
+                }
+                window.addEventListener('message', handlePostMessage)
+                window.onload = adjustIframeSize
+                window.onresize = adjustIframeSize
+                window.onunload = () => {
+                  window.removeEventListener('message', handlePostMessage)
+                }
+              </script>
+                </head>
+                <body>
+                  <div class="iframe-outer">
+                    <div class="iframe-wrapper">
+                      <iframe id="dynamicIframe" srcdoc='<html lang="zh-CN" data-theme="black"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>时序预警设置 - 股票预测系统</title>
+    <link href="./assets/static/uxbot/daisyui@5.css" rel="stylesheet" type="text/css">
+    <script src="./assets/static/uxbot/tailwind-browser@4.js"></script>
+    <link href="./assets/static/uxbot/daisyui-themes.css" rel="stylesheet" type="text/css">
+    <script src="./assets/3/3.1.1/iconify.min.js"></script>
+    <style>
+/* Import Google Fonts */
+@import url(&apos;https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap&apos;);
+
+/* DaisyUI Theme Variables Customization - Tech Cold Beauty Theme */
+:root {
+    /* Base Colors - Deep Dark Theme */
+    --color-base-100: rgba(0, 0, 0, 1);           /* Pure Black - main backgrounds */
+    --color-base-200: rgba(13, 13, 13, 1);       /* Dark Grey - secondary backgrounds, cards */
+    --color-base-300: rgba(26, 26, 26, 1);       /* Slightly Lighter Dark Grey - borders, separators */
+    --color-base-content: rgba(240, 240, 240, 1); /* Off-white/Light Grey - primary text */
+    
+    /* Fluorescent Accent Colors */
+    --color-primary: rgba(102, 102, 255, 1);      /* Fluorescent Blue-Purple */
+    --color-primary-content: rgba(0, 0, 0, 1);
+    --color-secondary: rgba(51, 255, 204, 1);     /* Fluorescent Cyan-Green */
+    --color-secondary-content: rgba(0, 0, 0, 1);
+    --color-accent: rgba(255, 136, 51, 1);        /* Fluorescent Red-Orange */
+    --color-accent-content: rgba(0, 0, 0, 1);
+    
+    /* Neutral Colors */
+    --color-neutral: rgba(42, 46, 55, 1);
+    --color-neutral-content: rgba(240, 240, 240, 1);
+    
+    /* Semantic Colors - Vibrant for Tech Aesthetic */
+    --color-success: rgba(0, 255, 127, 1);        /* Vibrant neon green */
+    --color-success-content: rgba(0, 0, 0, 1);
+    --color-warning: rgba(255, 191, 0, 1);        /* Bright orange/yellow */
+    --color-warning-content: rgba(0, 0, 0, 1);
+    --color-error: rgba(255, 51, 102, 1);         /* Bold neon red */
+    --color-error-content: rgba(0, 0, 0, 1);
+    --color-info: rgba(0, 191, 255, 1);           /* Clean bright blue */
+    --color-info-content: rgba(0, 0, 0, 1);
+    
+    /* Border radius and effects - Minimal tech aesthetic */
+    --radius-box: 0.25rem;    /* 4px for crisp, tech feel */
+    --radius-field: 0.25rem;
+    --radius-selector: 0.25rem;
+    --border: 1px;
+}
+
+/* Typography */
+.font-heading {
+    font-family: &apos;Inter&apos;, sans-serif;
+    font-weight: 600;
+}
+
+.font-body {
+    font-family: &apos;Inter&apos;, sans-serif;
+}
+
+.font-mono {
+    font-family: &apos;JetBrains Mono&apos;, monospace;
+}
+
+/* Apply fonts globally */
+h1, h2, h3, h4, h5, h6 {
+    font-family: &apos;Inter&apos;, sans-serif;
+    font-weight: 600;
+}
+
+body, p, span, div, button, input, textarea, select {
+    font-family: &apos;Inter&apos;, sans-serif;
+}
+
+/* Tech-cold beauty effects */
+.glow-primary {
+    box-shadow: 0 0 20px rgba(102, 102, 255, 0.3);
+}
+
+.glow-secondary {
+    box-shadow: 0 0 20px rgba(51, 255, 204, 0.3);
+}
+
+.glow-accent {
+    box-shadow: 0 0 20px rgba(255, 136, 51, 0.3);
+}
+
+/* Smooth transitions for interactive elements */
+.nav-item {
+    transition: all 0.15s ease-in-out;
+}
+
+.nav-item:hover {
+    color: var(--color-secondary);
+    text-shadow: 0 0 8px var(--color-secondary);
+}
+
+/* Custom shadows for tech aesthetic - hard edges */
+.shadow-tech {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(102, 102, 255, 0.1);
+}
+
+.shadow-tech-lg {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(102, 102, 255, 0.2);
+}
+
+/* Frosted glass effect for panels */
+.glass-panel {
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(102, 102, 255, 0.1);
+}
+
+/* Button hover effects with fluorescent glow */
+.btn:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(var(--color-primary), 0.4);
+}
+
+/* Input focus effects */
+.input:focus, .select:focus, .textarea:focus {
+    box-shadow: 0 0 0 2px var(--color-primary), 0 0 12px rgba(var(--color-primary), 0.3);
+}
+</style>
+    <style>
+/* Tech noise texture background */
+.glass-panel::before {
+    content: &apos;&apos;;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: 
+        radial-gradient(circle at 20% 50%, rgba(102, 102, 255, 0.05) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(51, 255, 204, 0.05) 0%, transparent 50%),
+        radial-gradient(circle at 40% 80%, rgba(255, 136, 51, 0.05) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: -1;
+}
+
+/* Enhanced glow effects for interactive elements */
+.btn:hover:not(:disabled) {
+    box-shadow: 0 0 20px rgba(var(--color-primary), 0.4);
+    transform: translateY(-2px);
+}
+
+.toggle:checked {
+    box-shadow: 0 0 12px rgba(var(--color-primary), 0.6);
+}
+
+.range::-webkit-slider-thumb {
+    box-shadow: 0 0 8px rgba(var(--color-primary), 0.8);
+}
+
+.range::-moz-range-thumb {
+    box-shadow: 0 0 8px rgba(var(--color-primary), 0.8);
+}
+
+/* Input focus glow animation */
+.input:focus, .select:focus, .textarea:focus {
+    animation: inputGlow 0.3s ease-in-out;
+    box-shadow: 0 0 0 2px var(--color-primary), 0 0 20px rgba(var(--color-primary), 0.4);
+}
+
+@keyframes inputGlow {
+    0% {
+        box-shadow: 0 0 0 0px var(--color-primary), 0 0 0px rgba(var(--color-primary), 0);
+    }
+    50% {
+        box-shadow: 0 0 0 4px var(--color-primary), 0 0 30px rgba(var(--color-primary), 0.6);
+    }
+    100% {
+        box-shadow: 0 0 0 2px var(--color-primary), 0 0 20px rgba(var(--color-primary), 0.4);
+    }
+}
+
+/* Button click ripple effect */
+.btn {
+    position: relative;
+    overflow: hidden;
+}
+
+.btn::after {
+    content: &apos;&apos;;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.3s, height 0.3s;
+}
+
+.btn:active::after {
+    width: 300px;
+    height: 300px;
+}
+
+/* Enhanced table styling */
+.table th {
+    background: rgba(var(--color-base-200), 0.5);
+    border-bottom: 2px solid rgba(var(--color-primary), 0.3);
+}
+
+.table tbody tr:hover {
+    background: rgba(var(--color-primary), 0.1);
+    transform: translateX(4px);
+    transition: all 0.2s ease;
+}
+
+/* Custom range slider styling */
+.range {
+    background: linear-gradient(to right, 
+        rgba(var(--color-primary), 0.3) 0%, 
+        rgba(var(--color-primary), 0.6) var(--range-value, 50%), 
+        rgba(var(--color-base-300), 0.3) var(--range-value, 50%), 
+        rgba(var(--color-base-300), 0.3) 100%);
+}
+
+/* Drag and drop styling for rules */
+.cursor-move:hover {
+    color: var(--color-secondary);
+    transform: scale(1.1);
+    transition: all 0.2s ease;
+}
+
+/* Modal backdrop blur effect */
+.modal-backdrop {
+    backdrop-filter: blur(8px);
+    background: rgba(0, 0, 0, 0.7);
+}
+
+/* Notification badge pulse animation */
+.badge {
+    animation: badgePulse 2s infinite;
+}
+
+@keyframes badgePulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.7;
+    }
+}
+
+/* Custom scrollbar for tech aesthetic */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--color-base-200);
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(to bottom, var(--color-primary), var(--color-secondary));
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(to bottom, var(--color-secondary), var(--color-accent));
+}
+
+/* Loading animation for data visualization */
+.chart-loading {
+    animation: chartPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes chartPulse {
+    0%, 100% {
+        opacity: 0.6;
+    }
+    50% {
+        opacity: 1;
+    }
+}
+
+/* Enhanced card hover effects */
+.glass-panel:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px rgba(var(--color-primary), 0.2);
+    transition: all 0.3s ease;
+}
+
+/* Geometric pattern overlay for sections */
+.section-pattern::before {
+    content: &apos;&apos;;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: 
+        linear-gradient(45deg, transparent 40%, rgba(var(--color-primary), 0.02) 50%, transparent 60%),
+        linear-gradient(-45deg, transparent 40%, rgba(var(--color-secondary), 0.02) 50%, transparent 60%);
+    pointer-events: none;
+    z-index: -1;
+}
+</style>
+<script src="./assets/static/uxbot/25_6/holder.js"></script></head>
+<body class="bg-base-100 min-h-screen">
+    <!-- Header -->
+    <div class="header-wrapper">
+        <div data-section-id="common_header_web" data-section-type="common_header" class="navbar bg-base-100 px-8 py-4 shadow-tech sticky top-0 z-50 glass-panel">
+    <!-- Logo Section -->
+    <div class="navbar-start">
+        <div class="dropdown lg:hidden">
+            <div tabindex="0" role="button" class="btn btn-ghost" onclick="toggleMobileMenu()">
+                <span class="iconify" data-icon="heroicons:bars-3" data-width="24"></span>
+            </div>
+            <ul tabindex="0" class="menu menu-sm dropdown-content mt-3 z-50 p-2 shadow-tech bg-base-200 rounded-box w-52 hidden" data-mobile-menu="">
+                <li><a onclick="navigateTo(&apos;market_overview_dashboard&apos;)">市场概览</a></li>
+                <li><a onclick="navigateTo(&apos;prediction_analysis_center&apos;)">预测分析</a></li>
+                <li><a onclick="navigateTo(&apos;agent_comparison_module&apos;)">智能体对比</a></li>
+                <li><a onclick="navigateTo(&apos;agent_evaluation_page&apos;)">模型评估</a></li>
+                <li><a onclick="navigateTo(&apos;personalization_settings_center&apos;)">个人设置</a></li>
+            </ul>
+        </div>
+        <a onclick="navigateTo(&apos;market_overview_dashboard&apos;)" class="text-2xl font-heading font-bold text-primary cursor-pointer flex items-center gap-2">
+            <span class="iconify" data-icon="heroicons:chart-bar" data-width="28"></span>
+            智能投研系统
+        </a>
+    </div>
+
+    <!-- Navigation Menu -->
+    <div class="navbar-center hidden lg:flex">
+        <ul class="menu menu-horizontal px-1 gap-6">
+            <li><a onclick="navigateTo(&apos;market_overview_dashboard&apos;)" class="nav-item text-base font-medium">市场概览</a></li>
+            <li><a onclick="navigateTo(&apos;prediction_analysis_center&apos;)" class="nav-item text-base font-medium">预测分析</a></li>
+            <li><a onclick="navigateTo(&apos;agent_comparison_module&apos;)" class="nav-item text-base font-medium">智能体对比</a></li>
+            <li><a onclick="navigateTo(&apos;agent_evaluation_page&apos;)" class="nav-item text-base font-medium">模型评估</a></li>
+            <li><a onclick="navigateTo(&apos;personalization_settings_center&apos;)" class="nav-item text-base font-medium">个人设置</a></li>
+        </ul>
+    </div>
+
+    <!-- Stock Search Bar -->
+    <div class="navbar-center hidden lg:flex lg:mx-8 flex-1 max-w-md">
+        <div class="join w-full">
+            <input type="text" placeholder="搜索股票代码或名称..." class="input input-bordered join-item flex-1 bg-base-200" data-stock-search-input="" onkeypress="if(event.key===&apos;Enter&apos;) handleStockSearch()">
+            <button class="btn btn-primary join-item" onclick="handleStockSearch()">
+                <span class="iconify" data-icon="heroicons:magnifying-glass" data-width="20"></span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Right Side Icons -->
+    <div class="navbar-end gap-3">
+        <!-- Theme Toggle -->
+        <button class="btn btn-ghost btn-circle" onclick="toggleTheme()" title="切换主题">
+            <span class="iconify" data-icon="heroicons:sun" data-width="24"></span>
+        </button>
+
+        <!-- System Notifications -->
+        <button class="btn btn-ghost btn-circle" onclick="navigateTo(&apos;alert_settings_page&apos;)" title="系统通知">
+            <div class="indicator">
+                <span class="iconify" data-icon="heroicons:bell" data-width="24"></span>
+                <span class="badge badge-xs badge-secondary indicator-item"></span>
+            </div>
+        </button>
+
+        <!-- Watchlist -->
+        <button class="btn btn-ghost btn-circle" onclick="navigateTo(&apos;watchlist_management&apos;)" title="自选股">
+            <div class="indicator">
+                <span class="iconify" data-icon="heroicons:star" data-width="24"></span>
+                <span class="badge badge-xs badge-accent indicator-item">5</span>
+            </div>
+        </button>
+
+        <!-- User Profile -->
+        <div class="dropdown dropdown-end">
+            <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">
+                <div class="avatar placeholder inline-flex items-center justify-center w-10 h-10 rounded-full bg-primary text-primary-content">
+                    <span class="flex items-center justify-center h-full font-semibold text-lg">U</span>
+                </div>
+            </div>
+            <ul tabindex="0" class="menu menu-sm dropdown-content mt-3 z-50 p-2 shadow-tech bg-base-200 rounded-box w-52">
+                <li><a onclick="navigateTo(&apos;user_profile_management&apos;)" class="justify-between">个人资料<span class="badge badge-sm badge-primary">Pro</span></a></li>
+                <li><a onclick="navigateTo(&apos;prediction_preference_settings&apos;)">预测偏好</a></li>
+                <li><a onclick="navigateTo(&apos;alert_settings_page&apos;)">预警设置</a></li>
+                <li><hr class="border-base-300"></li>
+                <li><a onclick="navigateTo(&apos;help_support_page&apos;)">帮助支持</a></li>
+                <li><a onclick="APP_GLOBALS.user.logout()">退出登录</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<style>
+[data-section-id="common_header_web"] .navbar {
+    border-bottom: var(--border) solid var(--color-base-300);
+    backdrop-filter: blur(10px);
+}
+
+[data-section-id="common_header_web"] .nav-item:hover {
+    color: var(--color-secondary);
+    text-shadow: 0 0 8px rgba(51, 255, 204, 0.5);
+}
+
+[data-section-id="common_header_web"] .input:focus {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+    box-shadow: 0 0 12px rgba(102, 102, 255, 0.3);
+}
+
+[data-section-id="common_header_web"] .dropdown:hover .dropdown-content {
+    display: block;
+}
+
+[data-section-id="common_header_web"] .btn-circle:hover {
+    background-color: rgba(102, 102, 255, 0.1);
+    color: var(--color-primary);
+    box-shadow: 0 0 12px rgba(102, 102, 255, 0.3);
+}
+
+[data-section-id="common_header_web"] .avatar:hover {
+    box-shadow: 0 0 12px rgba(102, 102, 255, 0.4);
+}
+</style>
+
+<script>
+(function() {
+    // Close mobile menu when clicking outside
+    document.addEventListener(&apos;click&apos;, function(e) {
+        const mobileMenu = document.querySelector(&apos;[data-mobile-menu]&apos;);
+        const menuButton = e.target.closest(&apos;.dropdown&apos;);
+        
+        if (mobileMenu && !menuButton && !mobileMenu.contains(e.target)) {
+            mobileMenu.classList.add(&apos;hidden&apos;);
+        }
+    });
+
+    // Enhanced stock search with suggestions
+    const searchInput = document.querySelector(&apos;[data-stock-search-input]&apos;);
+    if (searchInput) {
+        searchInput.addEventListener(&apos;input&apos;, function(e) {
+            const value = e.target.value.trim();
+            if (value.length >= 2) {
+                // Add search suggestions logic here if needed
+                // For now, just validate input format
+                if (/^[A-Za-z0-9]+$/.test(value)) {
+                    e.target.classList.remove(&apos;input-error&apos;);
+                    e.target.classList.add(&apos;input-success&apos;);
+                } else {
+                    e.target.classList.remove(&apos;input-success&apos;);
+                    e.target.classList.add(&apos;input-error&apos;);
+                }
+            } else {
+                e.target.classList.remove(&apos;input-success&apos;, &apos;input-error&apos;);
+            }
+        });
+    }
+
+    // Update user info in header if logged in
+    function updateUserDisplay() {
+        const userAvatar = document.querySelector(&apos;.avatar span&apos;);
+        if (userAvatar && window.APP_GLOBALS.user.isLoggedIn) {
+            userAvatar.textContent = window.APP_GLOBALS.user.username.charAt(0).toUpperCase();
+        }
+    }
+
+    // Initialize user display
+    updateUserDisplay();
+})();
+</script>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content-wrapper flex-1 px-8 py-8">
+        <!-- Page Header -->
+        <section id="page_header" class="mb-8">
+            <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center gap-4">
+                    <button onclick="navigateTo(&apos;personalization_settings_center&apos;)" class="btn btn-ghost btn-circle hover:glow-secondary">
+                        <span class="iconify text-secondary" data-icon="heroicons:arrow-left" data-width="24"></span>
+                    </button>
+                    <div>
+                        <h1 class="text-4xl font-bold text-base-content">时序预警设置</h1>
+                        <p class="text-base-content/70 mt-2">自定义价格时序模式阈值、预测信号强度等预警条件</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Alert Settings Overview -->
+        <section id="alert_settings_overview" class="mb-8">
+            <div class="glass-panel rounded-lg p-6 shadow-tech">
+                <h2 class="text-2xl font-semibold text-base-content mb-6">当前预警配置概览</h2>
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Overview Chart -->
+                    <div class="lg:col-span-2">
+                        <div class="bg-base-200/50 rounded-lg p-4 h-64 flex items-center justify-center relative overflow-hidden">
+                            <div class="absolute inset-0 opacity-10">
+                                <div class="w-full h-full holderjs" data-background-src="?placehold.co/600x256.png?text=Alert+Distribution+Chart"></div>
+                            </div>
+                            <div class="relative z-10 text-center">
+                                <div class="w-32 h-32 mx-auto mb-4 rounded-full border-4 border-primary/30 flex items-center justify-center">
+                                    <div class="w-24 h-24 rounded-full border-4 border-secondary/50 flex items-center justify-center">
+                                        <span class="text-2xl font-bold text-primary">75%</span>
+                                    </div>
+                                </div>
+                                <p class="text-base-content/70">预警策略覆盖率</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Key Metrics -->
+                    <div class="space-y-4">
+                        <div class="bg-base-200/30 rounded-lg p-4 border border-primary/20">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-base-content/70 text-sm">已激活预警</p>
+                                    <p class="text-2xl font-bold text-primary">12</p>
+                                </div>
+                                <span class="iconify text-primary" data-icon="heroicons:bell" data-width="32"></span>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-base-200/30 rounded-lg p-4 border border-secondary/20">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-base-content/70 text-sm">24小时触发</p>
+                                    <p class="text-2xl font-bold text-secondary">8</p>
+                                </div>
+                                <span class="iconify text-secondary" data-icon="heroicons:chart-bar" data-width="32"></span>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-base-200/30 rounded-lg p-4 border border-accent/20">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-base-content/70 text-sm">成功率</p>
+                                    <p class="text-2xl font-bold text-accent">89%</p>
+                                </div>
+                                <span class="iconify text-accent" data-icon="heroicons:trophy" data-width="32"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Alert Settings Cards Grid -->
+        <div class="grid grid-cols-1 xl:grid-cols-2 gap-8 mb-8">
+            <!-- Prediction Signal Alert -->
+            <section id="prediction_signal_alert" class="glass-panel rounded-lg p-6 shadow-tech">
+                <h3 class="text-xl font-semibold text-base-content mb-6 flex items-center gap-3">
+                    <span class="iconify text-primary" data-icon="heroicons:signal" data-width="24"></span>
+                    预测信号强度预警
+                </h3>
+                
+                <div class="space-y-6">
+                    <!-- Enable Toggle -->
+                    <div class="form-control">
+                        <label class="label cursor-pointer justify-start gap-4">
+                            <input type="checkbox" class="toggle toggle-primary" id="prediction_signal_enabled" checked="">
+                            <span class="label-text text-base-content">启用预测信号预警</span>
+                        </label>
+                    </div>
+                    
+                    <!-- Signal Strength Threshold -->
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text text-base-content">信号强度阈值</span>
+                        </label>
+                        <select class="select select-bordered select-sm w-full mt-1" id="signal_threshold_type">
+                            <option value="low">低 (30%)</option>
+                            <option value="medium" selected="">中 (60%)</option>
+                            <option value="high">高 (80%)</option>
+                            <option value="custom">自定义</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Custom Strength Value -->
+                    <div class="form-control" id="custom_strength_container" style="display: none;">
+                        <label class="label">
+                            <span class="label-text text-base-content">自定义强度值</span>
+                            <span class="label-text-alt text-base-content/70" id="strength_value_display">60%</span>
+                        </label>
+                        <input type="range" min="0" max="100" value="60" class="range range-primary" id="custom_strength_slider">
+                        <div class="w-full flex justify-between text-xs px-2 text-base-content/50">
+                            <span>0%</span>
+                            <span>25%</span>
+                            <span>50%</span>
+                            <span>75%</span>
+                            <span>100%</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Alert Frequency -->
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text text-base-content">预警频率</span>
+                        </label>
+                        <select class="select select-bordered select-sm w-full mt-1">
+                            <option value="realtime" selected="">实时</option>
+                            <option value="hourly">每小时</option>
+                            <option value="daily">每天</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Notification Methods -->
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text text-base-content">预警通知方式</span>
+                        </label>
+                        <div class="flex flex-wrap gap-2 mt-2">
+                            <label class="label cursor-pointer gap-2 bg-base-200/30 rounded-lg px-3 py-2">
+                                <input type="checkbox" class="checkbox checkbox-primary checkbox-sm" checked="">
+                                <span class="label-text text-sm">App通知</span>
+                            </label>
+                            <label class="label cursor-pointer gap-2 bg-base-200/30 rounded-lg px-3 py-2">
+                                <input type="checkbox" class="checkbox checkbox-primary checkbox-sm">
+                                <span class="label-text text-sm">邮件</span>
+                            </label>
+                            <label class="label cursor-pointer gap-2 bg-base-200/30 rounded-lg px-3 py-2">
+                                <input type="checkbox" class="checkbox checkbox-primary checkbox-sm">
+                                <span class="label-text text-sm">短信</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Price Temporal Pattern Alert -->
+            <section id="price_temporal_pattern_alert" class="glass-panel rounded-lg p-6 shadow-tech">
+                <h3 class="text-xl font-semibold text-base-content mb-6 flex items-center gap-3">
+                    <span class="iconify text-secondary" data-icon="heroicons:chart-line" data-width="24"></span>
+                    价格时序模式预警
+                </h3>
+                
+                <div class="space-y-6">
+                    <!-- Enable Toggle -->
+                    <div class="form-control">
+                        <label class="label cursor-pointer justify-start gap-4">
+                            <input type="checkbox" class="toggle toggle-secondary" id="price_pattern_enabled" checked="">
+                            <span class="label-text text-base-content">启用价格模式预警</span>
+                        </label>
+                    </div>
+                    
+                    <!-- Pattern Type Selection -->
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text text-base-content">选择模式类型</span>
+                        </label>
+                        <select class="select select-bordered select-sm w-full mt-1" id="pattern_type">
+                            <option value="breakout" selected="">突破阻力位</option>
+                            <option value="reversal">趋势反转</option>
+                            <option value="range">区间震荡</option>
+                            <option value="momentum">动量突破</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Volatility Threshold -->
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text text-base-content">波动幅度阈值</span>
+                            <span class="label-text-alt text-base-content/70" id="volatility_value_display">5.0%</span>
+                        </label>
+                        <input type="range" min="1" max="20" value="5" step="0.5" class="range range-secondary" id="volatility_slider">
+                        <div class="w-full flex justify-between text-xs px-2 text-base-content/50">
+                            <span>1%</span>
+                            <span>5%</span>
+                            <span>10%</span>
+                            <span>15%</span>
+                            <span>20%</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Time Range -->
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text text-base-content">有效时间范围</span>
+                        </label>
+                        <div class="grid grid-cols-2 gap-2 mt-1">
+                            <input type="datetime-local" class="input input-bordered input-sm" id="start_time">
+                            <input type="datetime-local" class="input input-bordered input-sm" id="end_time">
+                        </div>
+                    </div>
+                    
+                    <!-- Pattern Description -->
+                    <div class="alert alert-info">
+                        <span class="iconify" data-icon="heroicons:information-circle" data-width="20"></span>
+                        <span class="text-sm">系统将根据选定模式自动识别并触发预警</span>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Custom Alert Rules -->
+        <section id="custom_alert_rules" class="glass-panel rounded-lg p-6 shadow-tech mb-8">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-xl font-semibold text-base-content flex items-center gap-3">
+                    <span class="iconify text-accent" data-icon="heroicons:cog-6-tooth" data-width="24"></span>
+                    自定义预警规则
+                </h3>
+                <button class="btn btn-primary btn-sm" onclick="addNewRule()">
+                    <span class="iconify" data-icon="heroicons:plus" data-width="16"></span>
+                    添加新规则
+                </button>
+            </div>
+            
+            <!-- Rules List -->
+            <div class="space-y-4" id="custom_rules_list">
+                <!-- Rule Item 1 -->
+                <div class="bg-base-200/30 rounded-lg p-4 border border-accent/20" data-repeatable="true">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-4">
+                            <div class="cursor-move">
+                                <span class="iconify text-base-content/50" data-icon="heroicons:bars-3" data-width="20"></span>
+                            </div>
+                            <div>
+                                <h4 class="font-medium text-base-content">高风险股票预警</h4>
+                                <p class="text-sm text-base-content/70">当预测信号 &gt; 80% AND 波动率 &gt; 10%</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <input type="checkbox" class="toggle toggle-accent toggle-sm" checked="">
+                            <button class="btn btn-ghost btn-sm" onclick="editRule(this)">
+                                <span class="iconify" data-icon="heroicons:pencil" data-width="16"></span>
+                            </button>
+                            <button class="btn btn-ghost btn-sm text-error" onclick="deleteRule(this)">
+                                <span class="iconify" data-icon="heroicons:trash" data-width="16"></span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Rule Item 2 -->
+                <div class="bg-base-200/30 rounded-lg p-4 border border-accent/20" data-repeatable="true">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-4">
+                            <div class="cursor-move">
+                                <span class="iconify text-base-content/50" data-icon="heroicons:bars-3" data-width="20"></span>
+                            </div>
+                            <div>
+                                <h4 class="font-medium text-base-content">技术指标组合预警</h4>
+                                <p class="text-sm text-base-content/70">当RSI &lt; 30 OR MACD金叉</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <input type="checkbox" class="toggle toggle-accent toggle-sm">
+                            <button class="btn btn-ghost btn-sm" onclick="editRule(this)">
+                                <span class="iconify" data-icon="heroicons:pencil" data-width="16"></span>
+                            </button>
+                            <button class="btn btn-ghost btn-sm text-error" onclick="deleteRule(this)">
+                                <span class="iconify" data-icon="heroicons:trash" data-width="16"></span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Advanced Alert Settings -->
+        <section id="advanced_alert_settings" class="glass-panel rounded-lg p-6 shadow-tech mb-8">
+            <h3 class="text-xl font-semibold text-base-content mb-6 flex items-center gap-3">
+                <span class="iconify text-info" data-icon="heroicons:adjustments-horizontal" data-width="24"></span>
+                高级预警设置
+            </h3>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Anti-Spam Mode -->
+                <div class="form-control">
+                    <label class="label cursor-pointer justify-start gap-4">
+                        <input type="checkbox" class="toggle toggle-info" checked="">
+                        <div>
+                            <span class="label-text text-base-content">防骚扰模式</span>
+                            <p class="text-xs text-base-content/70">避免短时间内重复预警</p>
+                        </div>
+                    </label>
+                </div>
+                
+                <!-- Alert Sound -->
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text text-base-content">预警声音</span>
+                    </label>
+                    <select class="select select-bordered select-sm w-full mt-1">
+                        <option value="default" selected="">默认提示音</option>
+                        <option value="tech">科技音效</option>
+                        <option value="classic">经典铃声</option>
+                        <option value="silent">静音</option>
+                    </select>
+                </div>
+                
+                <!-- Minimum Alert Interval -->
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text text-base-content">最小预警间隔 (分钟)</span>
+                    </label>
+                    <input type="number" min="1" max="60" value="5" class="input input-bordered input-sm w-full mt-1">
+                </div>
+                
+                <!-- Priority Level -->
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text text-base-content">优先级</span>
+                    </label>
+                    <select class="select select-bordered select-sm w-full mt-1">
+                        <option value="high" selected="">高</option>
+                        <option value="medium">中</option>
+                        <option value="low">低</option>
+                    </select>
+                </div>
+                
+                <!-- API Integration -->
+                <div class="form-control md:col-span-2">
+                    <label class="label cursor-pointer justify-start gap-4">
+                        <input type="checkbox" class="toggle toggle-info">
+                        <span class="label-text text-base-content">接入第三方通知平台 (Webhook)</span>
+                    </label>
+                    <input type="url" placeholder="https://your-webhook-url.com" class="input input-bordered input-sm w-full mt-2" disabled="">
+                </div>
+            </div>
+            
+            <!-- Save Settings Button -->
+            <div class="flex justify-end mt-6">
+                <button class="btn btn-primary" onclick="saveAdvancedSettings()">
+                    <span class="iconify" data-icon="heroicons:check" data-width="16"></span>
+                    保存设置
+                </button>
+            </div>
+        </section>
+
+        <!-- Alert History -->
+        <section id="alert_history" class="glass-panel rounded-lg p-6 shadow-tech">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-xl font-semibold text-base-content flex items-center gap-3">
+                    <span class="iconify text-warning" data-icon="heroicons:clock" data-width="24"></span>
+                    预警历史记录
+                </h3>
+                <button class="btn btn-outline btn-sm" onclick="exportHistoryData()">
+                    <span class="iconify" data-icon="heroicons:arrow-down-tray" data-width="16"></span>
+                    导出历史数据
+                </button>
+            </div>
+            
+            <!-- Filters -->
+            <div class="flex flex-wrap gap-4 mb-6">
+                <select class="select select-bordered select-sm">
+                    <option selected="">全部类型</option>
+                    <option>预测信号</option>
+                    <option>价格模式</option>
+                    <option>自定义规则</option>
+                </select>
+                <input type="date" class="input input-bordered input-sm">
+                <input type="text" placeholder="搜索股票代码" class="input input-bordered input-sm">
+            </div>
+            
+            <!-- History Table -->
+            <div class="overflow-x-auto">
+                <table class="table table-zebra">
+                    <thead>
+                        <tr>
+                            <th class="cursor-pointer hover:bg-base-200">
+                                <div class="flex items-center gap-2">
+                                    <span>触发时间</span>
+                                    <span class="iconify" data-icon="heroicons:arrows-up-down" data-width="16"></span>
+                                </div>
+                            </th>
+                            <th class="cursor-pointer hover:bg-base-200">
+                                <div class="flex items-center gap-2">
+                                    <span>预警类型</span>
+                                    <span class="iconify" data-icon="heroicons:arrows-up-down" data-width="16"></span>
+                                </div>
+                            </th>
+                            <th class="cursor-pointer hover:bg-base-200">
+                                <div class="flex items-center gap-2">
+                                    <span>股票代码</span>
+                                    <span class="iconify" data-icon="heroicons:arrows-up-down" data-width="16"></span>
+                                </div>
+                            </th>
+                            <th>触发条件</th>
+                            <th>通知状态</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>2025-01-10 14:32:15</td>
+                            <td><span class="badge badge-primary badge-sm">预测信号</span></td>
+                            <td class="font-mono font-bold">AAPL</td>
+                            <td>信号强度 &gt; 85%</td>
+                            <td><span class="badge badge-success badge-outline">已发送</span></td>
+                            <td>
+                                <button class="btn btn-ghost btn-xs" onclick="viewAlertDetails(&apos;alert_1&apos;)">
+                                    <span class="iconify" data-icon="heroicons:eye" data-width="16"></span>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>2025-01-10 13:45:22</td>
+                            <td><span class="badge badge-secondary badge-sm">价格模式</span></td>
+                            <td class="font-mono font-bold">TSLA</td>
+                            <td>突破阻力位</td>
+                            <td><span class="badge badge-success badge-outline">已发送</span></td>
+                            <td>
+                                <button class="btn btn-ghost btn-xs" onclick="viewAlertDetails(&apos;alert_2&apos;)">
+                                    <span class="iconify" data-icon="heroicons:eye" data-width="16"></span>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>2025-01-10 12:18:45</td>
+                            <td><span class="badge badge-accent badge-sm">自定义规则</span></td>
+                            <td class="font-mono font-bold">NVDA</td>
+                            <td>高风险股票预警</td>
+                            <td><span class="badge badge-warning badge-outline">待发送</span></td>
+                            <td>
+                                <button class="btn btn-ghost btn-xs" onclick="viewAlertDetails(&apos;alert_3&apos;)">
+                                    <span class="iconify" data-icon="heroicons:eye" data-width="16"></span>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Pagination -->
+            <div class="flex justify-center mt-6">
+                <div class="join">
+                    <button class="join-item btn btn-sm">«</button>
+                    <button class="join-item btn btn-sm btn-active">1</button>
+                    <button class="join-item btn btn-sm">2</button>
+                    <button class="join-item btn btn-sm">3</button>
+                    <button class="join-item btn btn-sm">»</button>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer-wrapper">
+        <div data-section-id="common_footer_web" data-section-type="common_footer" class="bg-base-200">
+    <!-- Main Footer Content -->
+    <footer class="footer footer-horizontal p-12 text-base-content">
+        <!-- About Section -->
+        <aside>
+            <div class="flex items-center gap-2 mb-4">
+                <span class="iconify text-primary" data-icon="heroicons:chart-bar" data-width="32"></span>
+                <span class="text-2xl font-heading font-bold text-primary">智能投研系统</span>
+            </div>
+            <p class="text-sm leading-relaxed max-w-xs">基于多智能体强化学习的股票预测系统，专为时序数据分析与金融预测研究设计。帮助学生和研究者理解AI在金融领域的应用。</p>
+            <div class="flex gap-4 mt-4">
+                <a class="btn btn-ghost btn-sm btn-circle" title="GitHub项目">
+                    <span class="iconify" data-icon="mdi:github" data-width="20"></span>
+                </a>
+                <a class="btn btn-ghost btn-sm btn-circle" title="技术文档">
+                    <span class="iconify" data-icon="heroicons:document-text" data-width="20"></span>
+                </a>
+                <a class="btn btn-ghost btn-sm btn-circle" title="学术论文">
+                    <span class="iconify" data-icon="heroicons:academic-cap" data-width="20"></span>
+                </a>
+                <a class="btn btn-ghost btn-sm btn-circle" title="邮件联系">
+                    <span class="iconify" data-icon="heroicons:envelope" data-width="20"></span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Core Features -->
+        <nav>
+            <header class="footer-title text-primary font-heading">核心功能</header>
+            <a class="link link-hover" onclick="navigateTo(&apos;market_overview_dashboard&apos;)">市场概览仪表盘</a>
+            <a class="link link-hover" onclick="navigateTo(&apos;prediction_analysis_center&apos;)">预测结果分析</a>
+            <a class="link link-hover" onclick="navigateTo(&apos;agent_comparison_module&apos;)">智能体对比</a>
+            <a class="link link-hover" onclick="navigateTo(&apos;agent_evaluation_page&apos;)">模型性能评估</a>
+            <a class="link link-hover" onclick="navigateTo(&apos;watchlist_management&apos;)">自选股管理</a>
+        </nav>
+
+        <!-- Research Tools -->
+        <nav>
+            <header class="footer-title text-primary font-heading">研究工具</header>
+            <a class="link link-hover" onclick="navigateTo(&apos;prediction_preference_settings&apos;)">预测偏好配置</a>
+            <a class="link link-hover" onclick="navigateTo(&apos;alert_settings_page&apos;)">时序预警设置</a>
+            <a class="link link-hover">历史回溯测试</a>
+            <a class="link link-hover">参数调优界面</a>
+            <a class="link link-hover">模型迭代记录</a>
+        </nav>
+
+        <!-- Learning Resources -->
+        <nav>
+            <header class="footer-title text-primary font-heading">学习资源</header>
+            <a class="link link-hover" onclick="navigateTo(&apos;help_support_page&apos;)">系统使用指南</a>
+            <a class="link link-hover">算法原理解释</a>
+            <a class="link link-hover">时序分析教程</a>
+            <a class="link link-hover">强化学习基础</a>
+            <a class="link link-hover">金融数据科学</a>
+            <a class="link link-hover">常见问题解答</a>
+        </nav>
+
+        <!-- Account & Support -->
+        <nav>
+            <header class="footer-title text-primary font-heading">账户支持</header>
+            <a class="link link-hover" onclick="navigateTo(&apos;login_page&apos;)">用户登录</a>
+            <a class="link link-hover" onclick="navigateTo(&apos;registration_page&apos;)">注册账户</a>
+            <a class="link link-hover" onclick="navigateTo(&apos;user_profile_management&apos;)">个人资料</a>
+            <a class="link link-hover" onclick="navigateTo(&apos;help_support_page&apos;)">技术支持</a>
+            <a class="link link-hover">隐私政策</a>
+            <a class="link link-hover">使用条款</a>
+        </nav>
+    </footer>
+
+    <!-- Bottom Copyright Bar -->
+    <footer class="footer footer-center p-6 bg-base-300 text-base-content border-t border-base-content/10">
+        <aside>
+            <div class="flex flex-col sm:flex-row items-center justify-between w-full max-w-6xl gap-4">
+                <p class="text-sm">© 2025 多智能体强化学习股票预测系统. 版权所有.
+                    <span class="text-base-content/70">面向学生科研的专业化AI金融工具.</span>
+                </p>
+                <div class="flex items-center gap-6 text-sm">
+                    <a class="link link-hover">开源协议</a>
+                    <a class="link link-hover">学术引用</a>
+                    <div class="flex items-center gap-2">
+                        <span class="iconify" data-icon="heroicons:shield-check" data-width="16"></span>
+                        <span>学术研究用途</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="iconify" data-icon="heroicons:cpu-chip" data-width="16"></span>
+                        <span>AI驱动分析</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </footer>
+</div>
+
+<style>
+[data-section-id="common_footer_web"] .footer-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: var(--color-primary);
+}
+
+[data-section-id="common_footer_web"] .link-hover:hover {
+    color: var(--color-secondary);
+    text-shadow: 0 0 4px rgba(51, 255, 204, 0.3);
+    transition: all 0.15s ease-in-out;
+}
+
+[data-section-id="common_footer_web"] .btn-circle:hover {
+    background-color: rgba(102, 102, 255, 0.1);
+    color: var(--color-primary);
+    box-shadow: 0 0 12px rgba(102, 102, 255, 0.3);
+    transform: translateY(-2px);
+}
+
+[data-section-id="common_footer_web"] aside p {
+    color: var(--color-base-content);
+    opacity: 0.8;
+}
+
+[data-section-id="common_footer_web"] .bg-base-300 {
+    background: linear-gradient(135deg, var(--color-base-300) 0%, rgba(26, 26, 26, 0.8) 100%);
+}
+</style>
+
+<script>
+(function() {
+    // Add footer-specific JavaScript functionality
+    
+    // Analytics tracking for footer links (placeholder)
+    const footerLinks = document.querySelectorAll(&apos;[data-section-id="common_footer_web"] .link-hover&apos;);
+    footerLinks.forEach(link => {
+        link.addEventListener(&apos;click&apos;, function(e) {
+            const linkText = e.target.textContent.trim();
+            // Analytics tracking placeholder
+            console.log(`Footer link clicked: ${linkText}`);
+        });
+    });
+
+    // Social media links handling
+    const socialButtons = document.querySelectorAll(&apos;[data-section-id="common_footer_web"] .btn-circle&apos;);
+    socialButtons.forEach(button => {
+        button.addEventListener(&apos;click&apos;, function(e) {
+            e.preventDefault();
+            const icon = e.currentTarget.querySelector(&apos;.iconify&apos;);
+            const iconName = icon?.getAttribute(&apos;data-icon&apos;);
+            
+            // Handle different social/external links
+            switch(iconName) {
+                case &apos;mdi:github&apos;:
+                    window.open(&apos;https://github.com&apos;, &apos;_blank&apos;);
+                    break;
+                case &apos;heroicons:document-text&apos;:
+                    showSystemNotification(&apos;技术文档正在准备中...&apos;, &apos;info&apos;);
+                    break;
+                case &apos;heroicons:academic-cap&apos;:
+                    showSystemNotification(&apos;学术论文即将发布...&apos;, &apos;info&apos;);
+                    break;
+                case &apos;heroicons:envelope&apos;:
+                    window.location.href = &apos;mailto:support@stock-prediction-system.com&apos;;
+                    break;
+                default:
+                    console.log(&apos;Footer button clicked:&apos;, iconName);
+            }
+        });
+    });
+
+    // Copyright year auto-update (if needed)
+    const currentYear = new Date().getFullYear();
+    const copyrightElement = document.querySelector(&apos;[data-section-id="common_footer_web"] .footer-center p&apos;);
+    if (copyrightElement && currentYear > 2025) {
+        copyrightElement.innerHTML = copyrightElement.innerHTML.replace(&apos;2025&apos;, currentYear);
+    }
+})();
+</script>
+    </div>
+
+    <script>
+(function() {
+    // Initialize global namespace for app
+    window.APP_GLOBALS = window.APP_GLOBALS || {};
+
+    // Navigation function for page transitions
+    window.navigateTo = function(targetPageId) {
+        const isInIframe = window.self !== window.top;
+        const targetFileName = `${targetPageId}.html`;
+        
+        if (isInIframe) {
+            window.parent.postMessage({
+                type: &apos;iframeNavigation&apos;,
+                targetPageId: targetPageId
+            }, &apos;*&apos;);
+        } else {
+            window.location.href = targetFileName;
+        }
+    };
+
+    // Stock search functionality
+    window.handleStockSearch = function() {
+        const searchInput = document.querySelector(&apos;[data-stock-search-input]&apos;);
+        if (searchInput && searchInput.value.trim()) {
+            // Store search term for results page
+            sessionStorage.setItem(&apos;stockSearchTerm&apos;, searchInput.value.trim());
+            navigateTo(&apos;market_overview_dashboard&apos;);
+        }
+    };
+
+    // Mobile menu toggle
+    window.toggleMobileMenu = function() {
+        const mobileMenu = document.querySelector(&apos;[data-mobile-menu]&apos;);
+        if (mobileMenu) {
+            mobileMenu.classList.toggle(&apos;hidden&apos;);
+        }
+    };
+
+    // Notification system for system alerts
+    window.showSystemNotification = function(message, type = &apos;info&apos;) {
+        const toast = document.createElement(&apos;div&apos;);
+        toast.className = &apos;toast toast-end toast-top z-50&apos;;
+        
+        const alertClass = type === &apos;success&apos; ? &apos;alert-success&apos; : 
+                          type === &apos;error&apos; ? &apos;alert-error&apos; : 
+                          type === &apos;warning&apos; ? &apos;alert-warning&apos; : &apos;alert-info&apos;;
+        
+        const iconName = type === &apos;success&apos; ? &apos;heroicons:check-circle&apos; : 
+                        type === &apos;error&apos; ? &apos;heroicons:x-circle&apos; : 
+                        type === &apos;warning&apos; ? &apos;heroicons:exclamation-triangle&apos; : 
+                        &apos;heroicons:information-circle&apos;;
+        
+        toast.innerHTML = `
+            <div class="alert ${alertClass}">
+                <span class="iconify" data-icon="${iconName}" data-width="20"></span>
+                <span>${message}</span>
+            </div>
+        `;
+        
+        document.body.appendChild(toast);
+        
+        setTimeout(() => {
+            toast.remove();
+        }, 5000);
+    };
+
+    // Theme toggle functionality for dark/light modes
+    window.toggleTheme = function() {
+        const html = document.documentElement;
+        const currentTheme = html.getAttribute(&apos;data-theme&apos;);
+        const newTheme = currentTheme === &apos;black&apos; ? &apos;dark&apos; : &apos;black&apos;;
+        html.setAttribute(&apos;data-theme&apos;, newTheme);
+        localStorage.setItem(&apos;theme&apos;, newTheme);
+    };
+
+    // Initialize theme on load
+    window.initializeTheme = function() {
+        const savedTheme = localStorage.getItem(&apos;theme&apos;) || &apos;black&apos;;
+        document.documentElement.setAttribute(&apos;data-theme&apos;, savedTheme);
+    };
+
+    // User session management
+    window.APP_GLOBALS.user = {
+        isLoggedIn: localStorage.getItem(&apos;userLoggedIn&apos;) === &apos;true&apos;,
+        username: localStorage.getItem(&apos;username&apos;) || &apos;用户&apos;,
+        email: localStorage.getItem(&apos;userEmail&apos;) || &apos;&apos;,
+        
+        login: function(username, email) {
+            this.isLoggedIn = true;
+            this.username = username;
+            this.email = email;
+            localStorage.setItem(&apos;userLoggedIn&apos;, &apos;true&apos;);
+            localStorage.setItem(&apos;username&apos;, username);
+            localStorage.setItem(&apos;userEmail&apos;, email);
+        },
+        
+        logout: function() {
+            this.isLoggedIn = false;
+            this.username = &apos;用户&apos;;
+            this.email = &apos;&apos;;
+            localStorage.removeItem(&apos;userLoggedIn&apos;);
+            localStorage.removeItem(&apos;username&apos;);
+            localStorage.removeItem(&apos;userEmail&apos;);
+            navigateTo(&apos;login_page&apos;);
+        }
+    };
+
+    // Initialize theme when script loads
+    initializeTheme();
+})();
+</script>
+    <script>
+(function() {
+    // Initialize page functionality
+    document.addEventListener(&apos;DOMContentLoaded&apos;, function() {
+        initializeSliders();
+        initializeToggles();
+        initializeCustomRules();
+        setupFormValidation();
+    });
+
+    // Initialize range sliders with real-time value updates
+    function initializeSliders() {
+        const customStrengthSlider = document.getElementById(&apos;custom_strength_slider&apos;);
+        const strengthValueDisplay = document.getElementById(&apos;strength_value_display&apos;);
+        const volatilitySlider = document.getElementById(&apos;volatility_slider&apos;);
+        const volatilityValueDisplay = document.getElementById(&apos;volatility_value_display&apos;);
+
+        if (customStrengthSlider && strengthValueDisplay) {
+            customStrengthSlider.addEventListener(&apos;input&apos;, function() {
+                strengthValueDisplay.textContent = this.value + &apos;%&apos;;
+                this.style.setProperty(&apos;--range-value&apos;, this.value + &apos;%&apos;);
+            });
+        }
+
+        if (volatilitySlider && volatilityValueDisplay) {
+            volatilitySlider.addEventListener(&apos;input&apos;, function() {
+                volatilityValueDisplay.textContent = this.value + &apos;%&apos;;
+                this.style.setProperty(&apos;--range-value&apos;, (this.value / 20 * 100) + &apos;%&apos;);
+            });
+        }
+    }
+
+    // Initialize toggle switches and conditional displays
+    function initializeToggles() {
+        const signalThresholdType = document.getElementById(&apos;signal_threshold_type&apos;);
+        const customStrengthContainer = document.getElementById(&apos;custom_strength_container&apos;);
+
+        if (signalThresholdType && customStrengthContainer) {
+            signalThresholdType.addEventListener(&apos;change&apos;, function() {
+                if (this.value === &apos;custom&apos;) {
+                    customStrengthContainer.style.display = &apos;block&apos;;
+                } else {
+                    customStrengthContainer.style.display = &apos;none&apos;;
+                }
+            });
+        }
+
+        // Webhook toggle functionality
+        const webhookToggle = document.querySelector(&apos;input[type="checkbox"] + span:contains("接入第三方通知平台")&apos;);
+        const webhookInput = document.querySelector(&apos;input[type="url"][placeholder*="webhook"]&apos;);
+        
+        if (webhookToggle && webhookInput) {
+            const toggle = webhookToggle.previousElementSibling;
+            toggle.addEventListener(&apos;change&apos;, function() {
+                webhookInput.disabled = !this.checked;
+                if (this.checked) {
+                    webhookInput.focus();
+                }
+            });
+        }
+    }
+
+    // Custom rules management
+    function initializeCustomRules() {
+        // Make rules sortable (basic implementation)
+        const rulesList = document.getElementById(&apos;custom_rules_list&apos;);
+        if (rulesList) {
+            // Add drag and drop functionality would go here
+            // For now, just add hover effects
+            const rules = rulesList.querySelectorAll(&apos;[data-repeatable="true"]&apos;);
+            rules.forEach(rule => {
+                rule.addEventListener(&apos;mouseenter&apos;, function() {
+                    this.style.transform = &apos;translateX(4px)&apos;;
+                    this.style.transition = &apos;transform 0.2s ease&apos;;
+                });
+                rule.addEventListener(&apos;mouseleave&apos;, function() {
+                    this.style.transform = &apos;translateX(0)&apos;;
+                });
+            });
+        }
+    }
+
+    // Form validation setup
+    function setupFormValidation() {
+        const inputs = document.querySelectorAll(&apos;input[type="number"], input[type="url"], input[type="datetime-local"]&apos;);
+        inputs.forEach(input => {
+            input.addEventListener(&apos;blur&apos;, function() {
+                validateInput(this);
+            });
+        });
+    }
+
+    function validateInput(input) {
+        const value = input.value.trim();
+        
+        if (input.type === &apos;number&apos;) {
+            const min = parseFloat(input.min);
+            const max = parseFloat(input.max);
+            const val = parseFloat(value);
+            
+            if (isNaN(val) || val < min || val > max) {
+                input.classList.add(&apos;input-error&apos;);
+                input.classList.remove(&apos;input-success&apos;);
+            } else {
+                input.classList.add(&apos;input-success&apos;);
+                input.classList.remove(&apos;input-error&apos;);
+            }
+        } else if (input.type === &apos;url&apos;) {
+            const urlPattern = /^https?:\/\/.+/;
+            if (value && !urlPattern.test(value)) {
+                input.classList.add(&apos;input-error&apos;);
+                input.classList.remove(&apos;input-success&apos;);
+            } else if (value) {
+                input.classList.add(&apos;input-success&apos;);
+                input.classList.remove(&apos;input-error&apos;);
+            }
+        }
+    }
+
+    // Global functions for button interactions
+    window.addNewRule = function() {
+        showSystemNotification(&apos;新规则编辑器正在开发中...&apos;, &apos;info&apos;);
+    };
+
+    window.editRule = function(button) {
+        const ruleElement = button.closest(&apos;[data-repeatable="true"]&apos;);
+        const ruleName = ruleElement.querySelector(&apos;h4&apos;).textContent;
+        showSystemNotification(`编辑规则: ${ruleName}`, &apos;info&apos;);
+    };
+
+    window.deleteRule = function(button) {
+        const ruleElement = button.closest(&apos;[data-repeatable="true"]&apos;);
+        const ruleName = ruleElement.querySelector(&apos;h4&apos;).textContent;
+        
+        if (confirm(`确定要删除规则 "${ruleName}" 吗？`)) {
+            ruleElement.style.animation = &apos;fadeOut 0.3s ease&apos;;
+            setTimeout(() => {
+                ruleElement.remove();
+                showSystemNotification(&apos;规则已删除&apos;, &apos;success&apos;);
+            }, 300);
+        }
+    };
+
+    window.saveAdvancedSettings = function() {
+        // Simulate saving process
+        const button = event.target;
+        const originalText = button.innerHTML;
+        
+        button.innerHTML = &apos;<span class="loading loading-spinner loading-sm"></span> 保存中...&apos;;
+        button.disabled = true;
+        
+        setTimeout(() => {
+            button.innerHTML = originalText;
+            button.disabled = false;
+            showSystemNotification(&apos;高级设置已保存&apos;, &apos;success&apos;);
+        }, 1500);
+    };
+
+    window.exportHistoryData = function() {
+        showSystemNotification(&apos;正在准备导出数据...&apos;, &apos;info&apos;);
+        
+        setTimeout(() => {
+            showSystemNotification(&apos;历史数据导出完成&apos;, &apos;success&apos;);
+        }, 2000);
+    };
+
+    window.viewAlertDetails = function(alertId) {
+        showSystemNotification(`查看预警详情: ${alertId}`, &apos;info&apos;);
+    };
+
+    // CSS animation for fade out
+    const style = document.createElement(&apos;style&apos;);
+    style.textContent = `
+        @keyframes fadeOut {
+            from { opacity: 1; transform: translateX(0); }
+            to { opacity: 0; transform: translateX(-20px); }
+        }
+    `;
+    document.head.appendChild(style);
+})();
+</script>
+
+<script>
+    setTimeout(() => {
+      Holder.run({
+        domain: "placehold.co"
+      })
+    }, 100)
+  </script></body></html>'></iframe>
+                    </div>
+                  </div>
+
+                </body>
+                </html>
+            
